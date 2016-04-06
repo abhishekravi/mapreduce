@@ -49,8 +49,7 @@ public class ServerManager {
 	
 	
 	public void start () throws SocketException
-	{
-		/*start */
+	{		
 		startFailureDetection();
 	}
 	
