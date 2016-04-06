@@ -3,7 +3,6 @@ package proj.mapreduce.main;
 
 
 import java.io.IOException;
-
 import proj.mapreduce.client.ClientManager;
 
 public class Client {
