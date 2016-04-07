@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
@@ -18,109 +17,109 @@ import proj.mapreduce.server.ServerConfiguration;
  *
  */
 public class NetworkDiscovery {
-	
+
 	private static HashMap<InetAddress, Boolean> 	m_neighbors; 
-	private final static int m_port = 54321;
+	private final static int discoveryport = 54321;
 	private static boolean m_active = false;
-	
+
 	public HashMap<InetAddress, Boolean> discover()
 	{
-		
+
 		DatagramSocket bcsocket = createDatagramConnection ();
 		sendDiscoveryPacket (bcsocket);
-		
+
 		listen (bcsocket);
-		
+
 		return null;
 	}
-	
+
 	public HashMap<InetAddress, Boolean> discover(String inet)
 	{
-		
+
 		return null;
 	}
-	
+
 	private DatagramSocket createDatagramConnection () 
 	{
-		 DatagramSocket bcsocket = null;
+		DatagramSocket bcsocket = null;
 		try {
-			bcsocket = new DatagramSocket(m_port);
+			bcsocket = new DatagramSocket();
 			bcsocket.setBroadcast(true);
-			bcsocket.connect(InetAddress.getByName("10.42.0.255"), m_port);
+			//		bcsocket.connect(InetAddress.getByName("10.42.0.255"), m_port);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		 
-		 return bcsocket;
+
+		return bcsocket;
 	}
-	
+
 	private void sendDiscoveryPacket(DatagramSocket socket)
 	{
 		byte [] buf = Command.YARN_DETECT.toString().getBytes();
-		DatagramPacket discovermsg = new DatagramPacket(buf, buf.length);
-		
+
 		try {
+			DatagramPacket discovermsg = new DatagramPacket(buf, buf.length, 
+					InetAddress.getByName("192.168.1.255"), discoveryport);
 			socket.send(discovermsg);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 
-	private void listen (DatagramSocket socket)
-	{
-		final DatagramSocket bcsocket = socket;
-		
+	private void listen (final DatagramSocket socket)
+	{		
 		Runnable listener = new Runnable () {			
 			@Override
-            public void run() {
-				byte[] buf = new byte [8192];
-				DatagramPacket replypacket = new DatagramPacket(buf, buf.length);
-				String replymsg;
-				
-				m_active = true;
-				
-				while (m_active)
-				{
-					try {
-						bcsocket.receive(replypacket);
+			public void run() {
+
+				try {
+
+					//DatagramSocket socket = new DatagramSocket();
+					byte[] buf = new byte [256];
+					DatagramPacket replypacket = new DatagramPacket(buf, buf.length);
+					String replymsg;
+
+					m_active = true;
+
+					while (m_active)
+					{
+						socket.receive(replypacket);
 						replymsg = replypacket.getData().toString() + ":" + 
 								replypacket.getAddress().toString() + ":" + 
 								replypacket.getPort();
-						
+
 						Listener.takeAction(replymsg);
-						
-						
-					} catch (IOException e) {
-						e.printStackTrace();
 					}
+					
+					socket.close();
+					
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				
-            }
+			}
 		};
-		
+
 		Thread listenerth = new Thread(null, listener, "Startup Thread");
 		listenerth.start();
-		
+
 		try {
 			listenerth.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public static void updateneighbors (String address)
 	{
 		try {
 			m_neighbors.put(InetAddress.getByName(address), true);
-			
+
 			if (m_neighbors.size() >= ServerConfiguration.clientCount())
 			{
 				m_active = false;
 			}
-			
+
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}

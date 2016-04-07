@@ -38,10 +38,10 @@ import java.util.*;
 public class QuoteClient {
     public static void main(String[] args) throws IOException {
 
-        if (args.length != 1) {
-             System.out.println("Usage: java QuoteClient <hostname>");
-             return;
-        }
+        //if (args.length != 1) {
+           //  System.out.println("Usage: java QuoteClient <hostname>");
+         //    return;
+        //}
 
         String ipaddress = "10.42.0.255";
         

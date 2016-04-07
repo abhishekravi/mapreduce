@@ -10,7 +10,7 @@ public class PingTask implements Runnable {
 	
 	Thread m_pingth;
 	protected static DatagramSocket m_socket = null;
-	protected final int m_port = 4544;
+	private final int discoveryport = 54321;
 	boolean m_active = false;
 	static InetAddress m_serverip; 
 	
@@ -33,7 +33,7 @@ public class PingTask implements Runnable {
 	
 	private void setupConnection() throws SocketException {
 		
-		m_socket = new DatagramSocket(m_port);
+		m_socket = new DatagramSocket(discoveryport);
 	}
 
 	private void createListenerTh ()
