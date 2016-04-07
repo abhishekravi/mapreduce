@@ -64,7 +64,11 @@ public class PingTask implements Runnable {
 		        if (recvstr.split(":")[0].equals("yarn"))
 		        {
 		        	/* notify listener to take action */
-		        	recvstr += ":" + recv_packet.getAddress().toString() + ":" + recv_packet.getPort();
+		        	recvstr += 
+		        			":" + 
+		        			recv_packet.getAddress().toString().replaceFirst("/", "") + 
+		        			":" + recv_packet.getPort();
+		        	
 		        	CommandListener.takeAction(recvstr);
 		        }
 				
