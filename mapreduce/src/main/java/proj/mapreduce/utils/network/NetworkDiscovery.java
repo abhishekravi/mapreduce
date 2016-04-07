@@ -46,7 +46,7 @@ public class NetworkDiscovery {
 		try {
 			bcsocket = new DatagramSocket(m_port);
 			bcsocket.setBroadcast(true);
-			bcsocket.connect(InetAddress.getByName("255.255.255.255"), m_port);
+			bcsocket.connect(InetAddress.getByName("10.42.0.255"), m_port);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -100,7 +100,7 @@ public class NetworkDiscovery {
             }
 		};
 		
-		Thread listenerth = new Thread(null, listener, "balalalala");
+		Thread listenerth = new Thread(null, listener, "Startup Thread");
 		listenerth.start();
 		
 		try {

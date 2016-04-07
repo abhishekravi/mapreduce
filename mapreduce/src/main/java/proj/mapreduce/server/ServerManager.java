@@ -32,7 +32,7 @@ public class ServerManager {
 
 	public ServerManager() throws IOException
 	{	
-		m_ping_timer = new Timer(true);
+		//m_ping_timer = new Timer(true);
 		Configure();
 	}
 	
@@ -42,9 +42,16 @@ public class ServerManager {
 		NetworkDiscovery netdisk = new NetworkDiscovery();
 		m_neighbors = netdisk.discover();
 		
+		/*Start Server Connection */
+		
+		
+		
+		
 		/* configuring options*/
 		m_ping_timeout = 1000;
 		m_ping_frequency = 5000;
+		
+		
 		
 	}
 	
