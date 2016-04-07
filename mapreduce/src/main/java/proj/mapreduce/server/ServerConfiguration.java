@@ -7,5 +7,10 @@ public class ServerConfiguration {
 	/*master configuration such as */
 	InetAddress ip_address;
 	
-	int m_nclient;
+	static int m_nclient;
+	
+	public static int clientCount ()
+	{
+		return m_nclient;
+	}
 }

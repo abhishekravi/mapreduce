@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 
 import proj.mapreduce.server.Listener;
+import proj.mapreduce.server.ServerConfiguration;
 
 /**
  * Class to discover networks in the same subnet.
@@ -115,7 +116,10 @@ public class NetworkDiscovery {
 		try {
 			m_neighbors.put(InetAddress.getByName(address), true);
 			
-			
+			if (m_neighbors.size() >= ServerConfiguration.clientCount())
+			{
+				m_active = false;
+			}
 			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
