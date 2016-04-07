@@ -22,7 +22,6 @@ public class Observer implements Runnable {
 	Observer (InetAddress serverip) throws UnknownHostException, IOException
 	{
 		m_serverip = serverip;
-
 	}
 
 	public void start() throws UnknownHostException, IOException

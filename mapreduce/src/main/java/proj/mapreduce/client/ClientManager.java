@@ -19,12 +19,18 @@ public class ClientManager {
 	static final int ftp_server_port = 8080;
 
 	/* Run a thread to listen for received command in client/server tcp mode */
-	public static void startObserver() throws UnknownHostException, IOException {
+	public static void startObserver() {
 		if (m_pingtask == null)
 			return;
 
-		m_observer = new Observer(m_pingtask.serverAddress());
-		m_observer.start();
+		try {
+			m_observer = new Observer(m_pingtask.serverAddress());
+			m_observer.start();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 
 	}
 
