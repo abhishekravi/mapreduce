@@ -43,12 +43,14 @@ public class QuoteClient {
              return;
         }
 
-            // get a datagram socket
+        String ipaddress = "10.42.0.255";
+        
+        // get a datagram socket
         DatagramSocket socket = new DatagramSocket();
 
             // send request
         byte[] buf = new byte[256];
-        InetAddress address = InetAddress.getByName(args[0]);
+        InetAddress address = InetAddress.getByName(ipaddress);
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
         socket.send(packet);
     
