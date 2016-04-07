@@ -39,7 +39,8 @@ public class ServerManager {
 	private void Configure() throws IOException
 	{
 		/* Discover Network */
-		m_neighbors = NetworkDiscovery.discover();
+		NetworkDiscovery netdisk = new NetworkDiscovery();
+		m_neighbors = netdisk.discover();
 		
 		/* configuring options*/
 		m_ping_timeout = 1000;
@@ -68,6 +69,10 @@ public class ServerManager {
 	public void stopFailureDetection()
 	{
 		m_ping_timer.cancel();
+	}
+
+	public boolean busy() {
+		return m_active;
 	}
 
 }

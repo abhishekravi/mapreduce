@@ -14,7 +14,7 @@ public class JobScheduler {
 			
 	static Queue<Job> m_jobs;
 	static List <ClientConfiguration> m_clientconf;
-	static DatasetScheduler ;
+	static DatasetScheduler m_dssched;
 	
 	public JobScheduler() {
 		m_jobs = new PriorityQueue<Job>();
