@@ -67,7 +67,10 @@ public class MasterObserver implements Runnable {
 			while (m_active)
 			{				
 				command = m_instream.readLine();
-				CommandListener.takeAction(command);
+				
+				updateServer(command + ":responcemania\n");
+				
+				//CommandListener.takeAction(command);
 
 			}
 

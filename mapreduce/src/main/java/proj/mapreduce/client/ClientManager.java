@@ -30,8 +30,6 @@ public class ClientManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-
 	}
 
 	public static void startPinging() throws SocketException {
