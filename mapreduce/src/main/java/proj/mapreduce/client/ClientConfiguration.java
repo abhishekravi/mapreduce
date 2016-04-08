@@ -20,4 +20,9 @@ public class ClientConfiguration {
 	{
 		
 	}
+	
+	public static int observerPort ()
+	{
+		return 9182;
+	}
 }

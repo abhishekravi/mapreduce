@@ -6,28 +6,34 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import proj.mapreduce.client.CommandListener;
+
 public class ClientObserver implements Runnable {
 
 	private Socket m_clientsocket;
-	Thread m_clientobserverth; 
+	Thread m_obsrvth; 
 	static DataOutputStream m_outstream;
 	BufferedReader m_instream;
 	boolean m_active =false;
 	
-	public ClientObserver(Socket client) {
-		this.m_clientsocket = client;
-
+	public ClientObserver(ThreadGroup threadgrp, String clientaddr, int obsrvport) {
+		
+		m_obsrvth = new Thread(threadgrp, "Client Observer");
+		
+		try {
+			m_clientsocket = new Socket(clientaddr, obsrvport);
+			m_outstream = new DataOutputStream(m_clientsocket.getOutputStream());
+			m_instream = new BufferedReader(new InputStreamReader(m_clientsocket.getInputStream()));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void start() throws IOException
 	{
-		if (m_active) return; 
-		
-		m_clientobserverth = new Thread(this, "Client Observer");
-		m_clientobserverth.start();
-
-		m_outstream = new DataOutputStream(m_clientsocket.getOutputStream());
-		m_instream = new BufferedReader(new InputStreamReader(m_clientsocket.getInputStream()));	
+		if (m_active) return; 		
+		m_obsrvth.start();
 	}
 
 	public void stop() throws IOException
@@ -42,19 +48,18 @@ public class ClientObserver implements Runnable {
 	
 	@Override
 	public void run() {
-
 		m_active = true;
 		String reply;
 		
 		while(true){
 			try{
 				reply = m_instream.readLine();
-				
 				Listener.takeAction(reply);
-				
+			
 			}catch (IOException e) {
 				System.out.println("Read failed");
 				System.exit(-1);
+			
 			}
 		}
 

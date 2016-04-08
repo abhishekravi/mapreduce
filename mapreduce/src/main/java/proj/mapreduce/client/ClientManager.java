@@ -11,7 +11,7 @@ import proj.mapreduce.utils.network.ftp.FtpClient;
 public class ClientManager {
 
 	static boolean m_busy = false;
-	static Observer m_observer = null;
+	static MasterObserver m_observer = null;
 	static PingTask m_pingtask = null;
 	static FTPServer m_ftpserver = null;
 	static FtpClient m_ftpclient = null;
@@ -24,7 +24,7 @@ public class ClientManager {
 			return;
 
 		try {
-			m_observer = new Observer(m_pingtask.serverAddress());
+			m_observer = new MasterObserver(m_pingtask.serverAddress());
 			m_observer.start();
 			
 		} catch (IOException e) {

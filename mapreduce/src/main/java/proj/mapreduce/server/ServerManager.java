@@ -15,64 +15,49 @@ import proj.mapreduce.utils.network.PingTask;
 
 public class ServerManager {
 
-	int	m_ping_timeout;
-	int m_ping_frequency;
-
-	
 	boolean m_active = false;
-	
-	TimerTask m_ping_timer_task;
-	Timer m_ping_timer;
-	
-	HashMap<InetAddress, Boolean> 	m_neighbors;
-	HashMap<InetAddress, Integer> 	m_neighborsconfig;
 
-	JobScheduler m_jscheduler;
-	DatasetScheduler m_dsheduler;
+	static TimerTask m_ping_timer_task;
+	static Timer m_ping_timer;
 
+	static private ServerConfiguration m_serverconf;
+	static private ThreadGroup 			m_clientobsth;
+	private JobScheduler m_jscheduler;
+	private DatasetScheduler m_dsheduler;
+	
 	public ServerManager() throws IOException
-	{	
-		//m_ping_timer = new Timer(true);
+	{
 		Configure();
 	}
-	
+
 	private void Configure() throws IOException
 	{
-		/* Discover Network */
-		NetworkDiscovery netdisk = new NetworkDiscovery();
-		m_neighbors = netdisk.discover();
-		
-		/*Start Server Connection */
-		
-		
-		
-		
-		/* configuring options*/
-		m_ping_timeout = 1000;
-		m_ping_frequency = 5000;
-		
-		
-		
+		m_serverconf = new ServerConfiguration();
+		m_clientobsth = new ThreadGroup("Client Observers");
 	}
-	
-	
+
+
 	public void start () throws SocketException
-	{		
-		startFailureDetection();
+	{
+		NetworkDiscovery netdisk = new NetworkDiscovery(m_serverconf);
+		netdisk.discover();
 	}
-	
+
 	public void stop ()
 	{
 		stopFailureDetection();
 	}
-	
-	
-	public void startFailureDetection() throws SocketException
+
+
+	public static void startFailureDetection() throws SocketException
 	{
-		 m_ping_timer_task = new PingTask(m_neighbors, m_ping_timeout);
-		 m_ping_timer.scheduleAtFixedRate(m_ping_timer_task, 0, m_ping_frequency);
+		if (m_serverconf.clientCount() == 0)
+		{
+			m_ping_timer_task = new PingTask(m_serverconf.neighbors(), m_serverconf.pingTimeout());
+			m_ping_timer.scheduleAtFixedRate(m_ping_timer_task, 0, m_serverconf.pingFrequency());
+		}
 	}
-	
+
 	public void stopFailureDetection()
 	{
 		m_ping_timer.cancel();
@@ -82,4 +67,23 @@ public class ServerManager {
 		return m_active;
 	}
 
+	/**
+	 * create a thread which is a tcpclient thread to send data to a specific tcpserver which is one our clients 
+	 * @param address
+	 */
+	public static void startObserver(String address, int port) {
+				
+		try {
+			ClientObserver clientobs = new ClientObserver (m_clientobsth, address, port);
+			clientobs.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	public static void stopObserver(String address) {
+
+
+	}
 }

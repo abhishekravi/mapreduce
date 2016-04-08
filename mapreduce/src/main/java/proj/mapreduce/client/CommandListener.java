@@ -2,8 +2,6 @@ package proj.mapreduce.client;
 
 import java.io.IOException;
 
-import proj.mapreduce.utils.network.Command;
-
 
 public class CommandListener{
 
@@ -35,7 +33,7 @@ public class CommandListener{
 			{
 				String address = yarncommand.split(":")[3];
 				String port = yarncommand.split(":")[4];
-				String reply = address + "," + port + "," + Command.YARN_PINGACK.toString(); 
+				String reply = address + "," + port + "," + "yarn:" + command + ":yes"; 
 				PingTask.sendPingReply(reply);
 				ClientManager.startObserver ();
 			}
