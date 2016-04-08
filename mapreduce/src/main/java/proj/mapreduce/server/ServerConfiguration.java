@@ -45,12 +45,9 @@ public class ServerConfiguration {
 				}
 			}
 			LOGGER.info("server address:" + InetAddress.getLocalHost().getHostAddress());
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (UnknownHostException | SocketException e) {
+			LOGGER.error(e.getMessage());
+		} 
 	}
 	
 	public int clientCount ()
