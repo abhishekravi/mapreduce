@@ -1,10 +1,18 @@
 package proj.mapreduce.server;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ServerConfiguration {
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(ServerConfiguration.class);
 	
 	/*master configuration such as */
 	public InetAddress ip_address;
@@ -21,9 +29,26 @@ public class ServerConfiguration {
 		
 		m_nclient = nclients;
 		m_neighbors = new HashMap<InetAddress, Boolean>();
+		//fetching ip address of current machine
 		try {
-			ip_address = InetAddress.getByName(address);
+			Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
+			while(ifaces.hasMoreElements()){
+				NetworkInterface ni = ifaces.nextElement();
+				Enumeration<InetAddress> nias = ni.getInetAddresses();
+				while(nias.hasMoreElements()){
+					InetAddress ia = nias.nextElement();
+					if(!ia.isLoopbackAddress() && !ia.isLinkLocalAddress()){
+						ip_address = ia;
+						break;
+					}
+						
+				}
+			}
+			LOGGER.info("server address:" + InetAddress.getLocalHost().getHostAddress());
 		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
