@@ -66,6 +66,16 @@ public class JobScheduler {
 			
 			m_jobs.add(job);
 		}
+		
+		/* build merge job */
+		JobConfiguration mergjobconf = new JobConfiguration();
+		mergjobconf.setup("merge", null, null);
+		
+		Job mergejob = new Job ();
+		mergejob.setup(mergjobconf);
+		
+		m_jobs.add(mergejob);
+		
 	}
 	
 	

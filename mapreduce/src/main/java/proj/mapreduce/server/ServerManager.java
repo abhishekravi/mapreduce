@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import proj.mapreduce.job.Dataset;
 import proj.mapreduce.job.DatasetScheduler;
 import proj.mapreduce.job.JobScheduler;
 import proj.mapreduce.utils.network.NetworkDiscovery;
@@ -34,7 +35,7 @@ public class ServerManager {
 		m_serverconf = new ServerConfiguration(nclient);
 		
 		buildScheduler(jobname);
-		
+		buidDatasetScheduler(input);
 		m_clientobsthgrp = new ThreadGroup("Client Observers");
 		
 	}
@@ -100,9 +101,18 @@ public class ServerManager {
 		m_jscheduler.buid (jobs, m_serverconf.clientCount());
 	}
 	
-	public static void buidDatasetScheduler ()
+	public static void buidDatasetScheduler (String input)
 	{
 		m_dsheduler = new DatasetScheduler();
+		
+		try {
+			Dataset dataset = new Dataset(input);
+			dataset.distribute(m_serverconf.clientCount());
+			m_dsheduler.addDataset(dataset);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 }

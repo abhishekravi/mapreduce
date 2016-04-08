@@ -26,10 +26,8 @@ public class DatasetScheduler {
 		m_chunks = m_dataset.get(0).distribute(m_nclient);
 	}
 	
-	public void addDataset ()
+	public void addDataset (Dataset ds)
 	{
-		String bucketname = "a"; 
-		Dataset ds = new Dataset(bucketname);
 		m_dataset.add(ds);
 	}
 	

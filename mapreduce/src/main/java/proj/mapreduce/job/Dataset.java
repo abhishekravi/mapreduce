@@ -27,7 +27,7 @@ public class Dataset {
 		m_bucketname = bucketname;
 	}
 	
-	Dataset(String bucketname)
+	public Dataset(String bucketname)
 	{
 		m_bucketname = bucketname;
 	}

@@ -36,8 +36,9 @@ public class NetworkDiscovery {
 		m_disctimer = new Timer();
 		m_bcsocket = createDatagramConnection ();
 
-		sendDiscoveryPacket ();
 		listen ();
+		sendDiscoveryPacket ();
+		
 	}
 
 	public HashMap<InetAddress, Boolean> discover(String inet)
@@ -63,21 +64,24 @@ public class NetworkDiscovery {
 	{
 		byte [] buf = Command.YARN_DETECT.toString().getBytes();
 
-		try {
+		while (m_active)
+		{
+			try {
 
-			DatagramPacket discovermsg = new DatagramPacket(buf, buf.length, 
-					InetAddress.getByName("192.168.1.255"), discoveryport);
-			m_bcsocket.send(discovermsg);
+				DatagramPacket discovermsg = new DatagramPacket(buf, buf.length, 
+						InetAddress.getByName("192.168.1.255"), discoveryport);
+				m_bcsocket.send(discovermsg);
 
-			m_disctimer.schedule(new TimerTask() {
-				@Override
-				public void run() {
+				m_disctimer.schedule(new TimerTask() {
+					@Override
+					public void run() {
 
-				}
-			}, m_serverconf.discoveyTimeout());
+					}
+				}, m_serverconf.discoveyTimeout());
 
-		} catch (IOException e) {
-			e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}			
 		}
 	}
 
