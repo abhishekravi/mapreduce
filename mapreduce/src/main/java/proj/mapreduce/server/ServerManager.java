@@ -1,13 +1,14 @@
 package proj.mapreduce.server;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import proj.mapreduce.job.Dataset;
 import proj.mapreduce.job.DatasetScheduler;
@@ -18,6 +19,7 @@ import proj.mapreduce.utils.network.PingTask;
 
 public class ServerManager {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(ServerManager.class);
 	boolean m_active = false;
 
 	static TimerTask m_ping_timer_task;
@@ -29,10 +31,10 @@ public class ServerManager {
 	static private DatasetScheduler m_dsheduler;
 	static private List <ClientObserver> m_clientobservers;
 	
-	public ServerManager(int nclient, String jobname, String input, String output) throws IOException
+	public ServerManager(int nclient, String jobname, String input, String output, String address) throws IOException
 	{
 		m_clientobservers = new ArrayList<ClientObserver>();
-		m_serverconf = new ServerConfiguration(nclient);
+		m_serverconf = new ServerConfiguration(nclient, address);
 		
 		buildScheduler(jobname);
 		buidDatasetScheduler(input);
@@ -81,7 +83,7 @@ public class ServerManager {
 				
 		try {
 			ClientObserver clientobs = new ClientObserver (m_clientobsthgrp, address, port);
-			
+			LOGGER.info("address:" + address);
 			clientobs.start();
 			m_clientobservers.add(clientobs);
 			

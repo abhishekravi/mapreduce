@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class ServerConfiguration {
 	
 	/*master configuration such as */
-	InetAddress ip_address;
+	public InetAddress ip_address;
 	
 	int m_nclient;
 	
@@ -17,10 +17,15 @@ public class ServerConfiguration {
 	HashMap<InetAddress, Boolean> m_neighbors;
 
 
-	public ServerConfiguration(int nclients) {
+	public ServerConfiguration(int nclients, String address) {
 		
 		m_nclient = nclients;
 		m_neighbors = new HashMap<InetAddress, Boolean>();
+		try {
+			ip_address = InetAddress.getByName(address);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public int clientCount ()
