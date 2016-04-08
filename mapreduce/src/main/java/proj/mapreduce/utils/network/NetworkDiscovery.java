@@ -69,7 +69,7 @@ public class NetworkDiscovery {
 			try {
 
 				DatagramPacket discovermsg = new DatagramPacket(buf, buf.length, 
-						InetAddress.getByName("192.168.1.255"), discoveryport);
+						m_serverconf.ip_address, discoveryport);
 				m_bcsocket.send(discovermsg);
 
 				m_disctimer.schedule(new TimerTask() {
@@ -151,4 +151,3 @@ public class NetworkDiscovery {
 		m_disctimer.cancel();
 	}
 }
-
