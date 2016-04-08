@@ -33,7 +33,7 @@ public class ServerManager {
 		m_clientobservers = new ArrayList<ClientObserver>();
 		m_serverconf = new ServerConfiguration(nclient);
 		
-		buildScheduler();
+		buildScheduler(jobname);
 		
 		m_clientobsthgrp = new ThreadGroup("Client Observers");
 		
@@ -96,10 +96,8 @@ public class ServerManager {
 	
 	public static void buildScheduler (String jobs)
 	{
-		String filename;
-		
 		m_jscheduler = new JobScheduler();
-		m_jscheduler.buid (jobs);
+		m_jscheduler.buid (jobs, m_serverconf.clientCount());
 	}
 	
 	public static void buidDatasetScheduler ()
