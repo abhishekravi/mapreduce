@@ -18,7 +18,7 @@ public class ClientObserver implements Runnable {
 	
 	public ClientObserver(ThreadGroup threadgrp, String clientaddr, int obsrvport) {
 		
-		m_obsrvth = new Thread(threadgrp, "Client Observer");
+		m_obsrvth = new Thread(this, "Client Observer");
 		
 		try {
 			m_clientsocket = new Socket(clientaddr, obsrvport);
@@ -32,8 +32,14 @@ public class ClientObserver implements Runnable {
 
 	public void start() throws IOException
 	{
-		if (m_active) return; 		
-		m_obsrvth.start();
+		try {
+			if (m_active) return; 		
+			m_obsrvth.start();
+			m_obsrvth.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void stop() throws IOException
@@ -49,12 +55,17 @@ public class ClientObserver implements Runnable {
 	@Override
 	public void run() {
 		m_active = true;
+	
 		String reply;
 		
-		while(true){
+		
+		while(m_active){
 			try{
+				
+				sendCommand("yarn:hellomania\n");
+				
 				reply = m_instream.readLine();
-				Listener.takeAction(reply);
+				// Listener.takeAction(reply);
 			
 			}catch (IOException e) {
 				System.out.println("Read failed");

@@ -7,6 +7,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 import proj.mapreduce.client.ClientConfiguration;
+import proj.mapreduce.server.ServerConfiguration;
 import proj.mapreduce.utils.KeyPair;
 
 
@@ -52,6 +53,20 @@ public class JobScheduler {
 
 		return pair;
 	}
-
-
+	
+	public void buid (String jobname, int nclient)
+	{
+		for (int i = 0; i < nclient; i++)
+		{
+			JobConfiguration jobconf = new JobConfiguration();
+			jobconf.setup(jobname, null, null);
+			
+			Job job = new Job ();
+			job.setup(jobconf);
+			
+			m_jobs.add(job);
+		}
+	}
+	
+	
 }

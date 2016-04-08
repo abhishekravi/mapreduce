@@ -18,6 +18,11 @@ public class JobConfiguration {
 		
 	}
 	
+	public void setArgs (String[] args)
+	{
+		m_args = args;
+	}
+	
 	public String jobName() {
 		return m_jarname;
 	}

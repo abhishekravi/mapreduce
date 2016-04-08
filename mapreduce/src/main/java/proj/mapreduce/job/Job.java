@@ -30,6 +30,11 @@ public class Job {
 		m_configuration.setup(jname, mclass, args);
 	}
 	
+	public void setup(JobConfiguration jobconf)
+	{
+		m_configuration = jobconf;
+	}
+	
 	public void setup(String path)
 	{
 		if (m_configuration == null) return;

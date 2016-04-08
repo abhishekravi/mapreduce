@@ -9,13 +9,20 @@ public class ServerConfiguration {
 	/*master configuration such as */
 	InetAddress ip_address;
 	
-	int m_nclient = 1;
+	int m_nclient;
 	
 	int m_discovery_timeout;
 	int	m_ping_timeout;
 	int m_ping_frequency;
 	HashMap<InetAddress, Boolean> m_neighbors;
 
+
+	public ServerConfiguration(int nclients) {
+		
+		m_nclient = nclients;
+		m_neighbors = new HashMap<InetAddress, Boolean>();
+	}
+	
 	public int clientCount ()
 	{
 		return m_nclient;

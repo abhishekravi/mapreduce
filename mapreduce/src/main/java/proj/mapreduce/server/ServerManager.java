@@ -3,7 +3,9 @@ package proj.mapreduce.server;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,19 +23,20 @@ public class ServerManager {
 	static Timer m_ping_timer;
 
 	static private ServerConfiguration m_serverconf;
-	static private ThreadGroup 			m_clientobsth;
-	private JobScheduler m_jscheduler;
-	private DatasetScheduler m_dsheduler;
+	static private ThreadGroup 		m_clientobsthgrp;
+	static private JobScheduler m_jscheduler;
+	static private DatasetScheduler m_dsheduler;
+	static private List <ClientObserver> m_clientobservers;
 	
-	public ServerManager() throws IOException
+	public ServerManager(int nclient, String jobname, String input, String output) throws IOException
 	{
-		Configure();
-	}
-
-	private void Configure() throws IOException
-	{
-		m_serverconf = new ServerConfiguration();
-		m_clientobsth = new ThreadGroup("Client Observers");
+		m_clientobservers = new ArrayList<ClientObserver>();
+		m_serverconf = new ServerConfiguration(nclient);
+		
+		buildScheduler();
+		
+		m_clientobsthgrp = new ThreadGroup("Client Observers");
+		
 	}
 
 
@@ -41,6 +44,8 @@ public class ServerManager {
 	{
 		NetworkDiscovery netdisk = new NetworkDiscovery(m_serverconf);
 		netdisk.discover();
+		
+		
 	}
 
 	public void stop ()
@@ -74,16 +79,32 @@ public class ServerManager {
 	public static void startObserver(String address, int port) {
 				
 		try {
-			ClientObserver clientobs = new ClientObserver (m_clientobsth, address, port);
+			ClientObserver clientobs = new ClientObserver (m_clientobsthgrp, address, port);
+			
 			clientobs.start();
+			m_clientobservers.add(clientobs);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 
-	public static void stopObserver(String address) {
+	public static void stopObserver(String address) 
+	{
 
-
+	}
+	
+	public static void buildScheduler (String jobs)
+	{
+		String filename;
+		
+		m_jscheduler = new JobScheduler();
+		m_jscheduler.buid (jobs);
+	}
+	
+	public static void buidDatasetScheduler ()
+	{
+		m_dsheduler = new DatasetScheduler();
+		
 	}
 }

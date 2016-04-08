@@ -11,7 +11,7 @@ public class DatasetScheduler {
 	
 	static int 	m_nclient;
 	
-	DatasetScheduler ()
+	public DatasetScheduler ()
 	{
 		m_dataset = new ArrayList<Dataset>();
 	}

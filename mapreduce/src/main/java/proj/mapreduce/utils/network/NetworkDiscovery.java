@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -74,7 +73,6 @@ public class NetworkDiscovery {
 				@Override
 				public void run() {
 
-					stop ();
 				}
 			}, m_serverconf.discoveyTimeout());
 
@@ -102,9 +100,10 @@ public class NetworkDiscovery {
 					while (m_active)
 					{
 						m_bcsocket.receive(replypacket);
-						replymsg = replypacket.getData().toString() + ":" + 
-								replypacket.getAddress().toString().replaceFirst("/", "") + ":" + 
-								replypacket.getPort();
+						
+						replymsg = new String(replypacket.getData(), 0, replypacket.getLength());
+						
+						replymsg += ":" + replypacket.getAddress().toString().replaceFirst("/", "");
 
 						Listener.takeAction(replymsg);
 					}
@@ -132,12 +131,12 @@ public class NetworkDiscovery {
 		{
 			return false;
 		}
-		
-		if (m_neighbors.size() >= m_serverconf.clientCount())
+
+		if (m_serverconf.neighbors().size() >= m_serverconf.clientCount())
 		{
-			stop ();
+//			stop ();
 		}
-		
+
 		return true;
 	}
 

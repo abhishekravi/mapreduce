@@ -40,15 +40,14 @@ public class Listener {
 
 			if (arg.equals("yes"))
 			{
-				String address = yarncommand.split(":")[3];
-				int obsrvport = Integer.parseInt(yarncommand.split(":")[4]);
-				
+				String address = yarncommand.split(":")[4];
+				int obsrvport = Integer.parseInt(yarncommand.split(":")[3]);
+		
 				if (NetworkDiscovery.updateneighbors(address))
 				{
-					ServerManager.startFailureDetection();
+					// ServerManager.startFailureDetection();
 					ServerManager.startObserver (address, obsrvport);	
-				}
-				
+				}				
 			}
 
 			break;
