@@ -32,7 +32,7 @@ public class ClientManager {
 		}
 	}
 
-	public static void startPinging() throws SocketException {
+	public void startPinging() throws SocketException {
 
 		m_pingtask = new PingTask();
 		m_pingtask.start();
@@ -85,7 +85,7 @@ public class ClientManager {
 		
 	}
 
-	public static boolean busy() {
+	public boolean busy() {
 		return m_busy;
 	}
 }
