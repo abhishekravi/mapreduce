@@ -18,7 +18,7 @@ public class Client {
 		prop.load(input);
 		ClientManager m_client = new ClientManager(prop.getProperty("awsid"), prop.getProperty("awskey"));
 		m_client.startPinging();
-		//m_client.startFtpServer();
+		m_client.startFtpServer();
 		while (m_client.busy());
 		
 		

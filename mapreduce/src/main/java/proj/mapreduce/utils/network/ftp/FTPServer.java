@@ -51,7 +51,7 @@ public class FTPServer {
 
 		userManagerFactory = new PropertiesUserManagerFactory();
 		userManagerFactory.setFile(new File(System.getProperty("user.dir")
-				+ "/myusers.properties"));
+				+ "/" + "users.properties"));
 		userManagerFactory.setPasswordEncryptor(new CostumPasswordEncryptor());
 
 		m_usermanager = userManagerFactory.createUserManager();

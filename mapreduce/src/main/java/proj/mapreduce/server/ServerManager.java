@@ -154,7 +154,7 @@ public class ServerManager {
 			{
 				/* create job command */
 				Job job = pair.getLeft();
-				job.addDataset("local", "/home/A7/data", m_dsheduler.getNextChunk());
+				job.addDataset(m_dsheduler.getType(), m_dsheduler.getBucketname(), m_dsheduler.getNextChunk());
 				
 				String command = Command.YARN_RUN_JOB.toString(); 
 				command = command + job.toString() + "\n";

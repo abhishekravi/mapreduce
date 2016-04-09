@@ -50,4 +50,14 @@ public class DatasetScheduler {
 		
 		return keys;
 	}
+	
+	public String getType()
+	{
+		return m_dataset.get(0).type();
+	}
+	
+	public String getBucketname()
+	{
+		return m_dataset.get(0).bucketname();
+	}
 }

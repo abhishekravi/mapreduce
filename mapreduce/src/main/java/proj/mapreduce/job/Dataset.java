@@ -71,5 +71,14 @@ public class Dataset {
 		
 		return chunks;
 	}
+
+	public String type ()
+	{
+		return m_type;
+	}
 	
+	public String bucketname()
+	{
+		return m_bucketname;
+	}
 }
