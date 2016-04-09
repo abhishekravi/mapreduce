@@ -1,18 +1,25 @@
 package proj.mapreduce.server;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import proj.mapreduce.client.ClientConfiguration;
 import proj.mapreduce.job.Dataset;
 import proj.mapreduce.job.DatasetScheduler;
+import proj.mapreduce.job.Job;
 import proj.mapreduce.job.JobScheduler;
+import proj.mapreduce.utils.KeyPair;
+import proj.mapreduce.utils.network.Command;
 import proj.mapreduce.utils.network.NetworkDiscovery;
 import proj.mapreduce.utils.network.PingTask;
 
@@ -29,11 +36,11 @@ public class ServerManager {
 	static private ThreadGroup 		m_clientobsthgrp;
 	static private JobScheduler m_jscheduler;
 	static private DatasetScheduler m_dsheduler;
-	static private List <ClientObserver> m_clientobservers;
+	static private Map <InetAddress, ClientObserver> m_clientobservers;
 	
 	public ServerManager(int nclient, String jobname, String input, String output, String address) throws IOException
 	{
-		m_clientobservers = new ArrayList<ClientObserver>();
+		m_clientobservers = new HashMap<InetAddress, ClientObserver>();
 		m_serverconf = new ServerConfiguration(nclient, address);
 		
 		buildScheduler(jobname);
@@ -85,7 +92,7 @@ public class ServerManager {
 			ClientObserver clientobs = new ClientObserver (m_clientobsthgrp, address, port);
 			LOGGER.info("address:" + address);
 			clientobs.start();
-			m_clientobservers.add(clientobs);
+			m_clientobservers.put(InetAddress.getByName(address), clientobs);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -116,5 +123,28 @@ public class ServerManager {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public static void startScheduling ()
+	{
+		for (int i = 0; i < m_serverconf.clientCount(); i++)
+		{
+			
+			KeyPair<Job, ClientConfiguration> pair = m_jscheduler.scheduleNextJob();
+	
+			if (m_clientobservers.containsKey(pair.getRight().getIpaddress()))
+			{
+				/* create job command */
+				String command = Command.YARN_RUN_JOB.toString(); 
+				command = command + pair.getLeft().getJobName() + ":" + pair.getLeft().getJobInput()
+						 + ":" + pair.getLeft().getJobOutput() + "\n";
+				
+				try {
+					m_clientobservers.get(pair.getRight().getIpaddress()).sendCommand(command);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }

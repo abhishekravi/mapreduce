@@ -10,6 +10,7 @@ import java.util.TimerTask;
 
 import proj.mapreduce.server.Listener;
 import proj.mapreduce.server.ServerConfiguration;
+import proj.mapreduce.server.ServerManager;
 
 /**
  * Class to discover networks in the same subnet.
@@ -121,11 +122,11 @@ public class NetworkDiscovery {
 		Thread listenerth = new Thread(null, listener, "Startup Thread");
 		listenerth.start();
 
-		try {
-			listenerth.join();
+		/*try {
+			//listenerth.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
+		}*/
 
 	}
 
@@ -138,6 +139,7 @@ public class NetworkDiscovery {
 
 		if (m_serverconf.neighbors().size() >= m_serverconf.clientCount())
 		{
+			ServerManager.startScheduling();
 //			stop ();
 		}
 

@@ -77,7 +77,10 @@ public class Listener {
 
 			break;
 		case "runjob":
-			ClientManager.runJob();
+			String name = yarncommand.split(":")[2];
+			String input = yarncommand.split(":")[3];
+			String output = yarncommand.split(":")[4];
+			ClientManager.runJob(name, input, output);
 		}
 	}
 

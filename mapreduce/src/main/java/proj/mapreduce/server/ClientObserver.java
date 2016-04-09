@@ -76,7 +76,7 @@ public class ClientObserver implements Runnable {
 
 	}
 
-	public static void sendCommand(String command) throws IOException
+	public void sendCommand(String command) throws IOException
 	{
 		m_outstream.writeBytes(command);
 	}

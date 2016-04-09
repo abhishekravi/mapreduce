@@ -51,4 +51,19 @@ public class Job {
 	{
 		return m_clientId;
 	}
+	
+	public String getJobName()
+	{
+		return m_configuration.getName();
+	}
+	
+	public String getJobInput()
+	{
+		return m_configuration.getInput();
+	}
+	
+	public String getJobOutput()
+	{
+		return m_configuration.getOutput();
+	}
 }

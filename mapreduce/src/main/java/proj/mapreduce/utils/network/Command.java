@@ -1,10 +1,12 @@
 package proj.mapreduce.utils.network;
 
 public enum Command {
-    YARN_DETECT 	("yarn:detect:x"),
-    YARN_PINGNACK 	("yarn:detect:no"),
-	YARN_PINGACK  	("yarn:detect:yes");
-
+    YARN_DETECT 		("yarn:detect:x"),
+    YARN_PINGNACK 		("yarn:detect:no"),
+	YARN_PINGACK  		("yarn:detect:yes"),
+	YARN_RUN_JOB   		("yarn:runjob:"),
+	YARN_COMPLETE_JOB	("yarn:jobcomp");
+	
     private final String text;
 
     /**

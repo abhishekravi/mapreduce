@@ -34,4 +34,19 @@ public class JobConfiguration {
 	public String[] jobArgs() {
 		return m_args;
 	}
+	
+	public String getName()
+	{
+		return m_jarname;
+	}
+	
+	public String getInput()
+	{
+		return m_args[0];
+	}
+	
+	public String getOutput()
+	{
+		return m_args[1];
+	}
 }

@@ -1,6 +1,7 @@
 package proj.mapreduce.server;
 
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -31,21 +32,22 @@ public class ServerConfiguration {
 		m_neighbors = new HashMap<InetAddress, Boolean>();
 		//fetching ip address of current machine
 		try {
-			Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
-			while(ifaces.hasMoreElements()){
-				NetworkInterface ni = ifaces.nextElement();
-				Enumeration<InetAddress> nias = ni.getInetAddresses();
-				while(nias.hasMoreElements()){
-					InetAddress ia = nias.nextElement();
-					if(!ia.isLoopbackAddress() && !ia.isLinkLocalAddress()){
-						ip_address = ia;
-						break;
-					}
-						
+			Enumeration<NetworkInterface> interfaces =
+				    NetworkInterface.getNetworkInterfaces();
+				while (interfaces.hasMoreElements()) {
+				  NetworkInterface networkInterface = interfaces.nextElement();
+				  if (networkInterface.isLoopback())
+				    continue;    // Don't want to broadcast to the loopback interface
+				  for (InterfaceAddress interfaceAddress :
+				           networkInterface.getInterfaceAddresses()) {
+				    this.ip_address = interfaceAddress.getBroadcast();
+				    if (this.ip_address == null)
+				      continue;
+				    // Use the address
+				  }
 				}
-			}
-			LOGGER.info("server address:" + InetAddress.getLocalHost().getHostAddress());
-		} catch (UnknownHostException | SocketException e) {
+				LOGGER.info("broadcast address:" + this.ip_address.getHostAddress());
+		} catch (SocketException e) {
 			LOGGER.error(e.getMessage());
 		} 
 	}

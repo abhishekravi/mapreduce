@@ -2,8 +2,8 @@ package proj.mapreduce.client;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 
+import proj.mapreduce.job.JobRunner;
 import proj.mapreduce.utils.awshelper.S3Reader;
 import proj.mapreduce.utils.network.ftp.FTPServer;
 import proj.mapreduce.utils.network.ftp.FtpClient;
@@ -72,8 +72,17 @@ public class ClientManager {
 
 	}
 
-	public static void runJob() {
-
+	public static void runJob(String name, String input, String output) {
+		
+		JobRunner runner = new JobRunner();
+		
+		runner.prepareInput(input);
+		try {
+			runner.runJob (name, output);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public static boolean busy() {
