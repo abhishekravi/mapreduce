@@ -9,6 +9,7 @@ import org.apache.commons.net.io.SocketOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import proj.mapreduce.client.ClientConfiguration;
 import proj.mapreduce.client.MasterObserver;
 import proj.mapreduce.main.Server;
 import proj.mapreduce.utils.FileOp;
@@ -21,7 +22,10 @@ public class JobRunner {
 	String m_inputdir; 
 	String m_args;
 	private static Logger LOGGER = LoggerFactory.getLogger(JobRunner.class);
-
+	
+	ClientConfiguration m_clientconf;
+	
+	
 	public void setArgs(String args)
 	{
 		m_args = args;
@@ -98,28 +102,35 @@ public class JobRunner {
 			}
 			proc.waitFor();
 			
-			MasterObserver.updateServer(makeReply (m_args.split(",")[1]));
+			
+			MasterObserver.updateServer(makeReply2Server (m_args.split(",")[1]));
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private String makeReply (String out)
+	private String makeReply2Server (String out)
 	{
 		File outdir = new File (out);
 		File [] files = outdir.listFiles();
-
+		
 		String command = Command.YARN_COMPLETE_JOB.toString();
 
+		command = command + m_clientconf.ftpPort() + ":";
+		command = command + m_clientconf.ftpUser() + ":";
+		command = command + m_clientconf.ftpPass() + ":";
+		
+		
 		for (int i = 0; i < files.length; i++)
 		{
 			if (files[i].isFile())
 			{
-				command = command + ":" + files[i].toString();
+				command = command + files[i].getName().replace(m_clientconf.ftpPath() + "/", "") + ",";
 			}
-
 		}
+		
+		command = command.substring(0, command.lastIndexOf(","));
 
 		return command;
 	}

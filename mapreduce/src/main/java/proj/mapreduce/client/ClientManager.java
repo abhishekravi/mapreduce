@@ -17,13 +17,24 @@ public class ClientManager {
 	static FtpClient m_ftpclient = null;
 	static String awsid;
 	static String awskey;
-
+	static ClientConfiguration m_clientconf;
+	
 	public ClientManager(String awsid, String awskey){
 		ClientManager.awsid = awsid;
 		ClientManager.awskey = awskey;
+		
+		m_clientconf = new ClientConfiguration();
 	}
 	
-	static final int ftp_server_port = 8080;
+	public ClientManager(String awsid, String awskey, String ftpuser, String ftppass, String ftppath)
+	{
+		ClientManager.awsid = awsid;
+		ClientManager.awskey = awskey;
+		
+		m_clientconf = new ClientConfiguration();
+		m_clientconf.setupFtpConfiguration(ftpuser, ftppass, ftppath);
+		
+	}
 
 	/* Run a thread to listen for received command in client/server tcp mode */
 	public static void startObserver() {
@@ -48,8 +59,8 @@ public class ClientManager {
 
 	public void startFtpServer() {
 
-		m_ftpserver = new FTPServer();
-		m_ftpserver.createFtpServer(ftp_server_port);
+		m_ftpserver = new FTPServer(m_clientconf);
+		m_ftpserver.createFtpServer();
 		m_ftpserver.start();
 
 	}

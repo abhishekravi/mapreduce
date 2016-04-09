@@ -17,25 +17,35 @@ import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
 
+import proj.mapreduce.client.ClientConfiguration;
+
 public class FTPServer {
 
-	UserManager m_usermanager = null;
-	FtpServer m_ftpserver = null;
-
-	public void createFtpServer(int ftp_port) {
+	UserManager m_usermanager;
+	FtpServer m_ftpserver;
+	ClientConfiguration m_clientconf;
+	
+	public FTPServer(ClientConfiguration clientconf)
+	{
+		m_clientconf = clientconf;
+		m_usermanager = null;
+		m_ftpserver = null;		
+	}
+	
+	public void createFtpServer() {
 		Map<String, Ftplet> ftplet;
 		FtpServerFactory serverFactory;
 		ListenerFactory factory;
 
 		factory = new ListenerFactory();
-		factory.setPort(ftp_port);
+		factory.setPort(m_clientconf.ftpPort());
 
 		serverFactory = new FtpServerFactory();
 		serverFactory.addListener("default", factory.createListener());
 
 		if (m_usermanager == null) {
 			createUserManager();
-			addUser("test", "test", "/home/test");
+			addUser(m_clientconf.ftpUser(), m_clientconf.ftpPass(), m_clientconf.ftpPath());
 		}
 		serverFactory.setUserManager(m_usermanager);
 

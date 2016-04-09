@@ -13,8 +13,40 @@ public class ClientConfiguration {
 	boolean m_active = false;
 	InetAddress m_address;
 	final static int serverport = 9182;
-	final static int ftpport = 8291;
+	
+	final static int m_ftpport = 8291;
+	static String m_ftpuser;
+	static String m_ftppass;
+	static String m_ftppath;
+	
 	ClientObserver 	 m_observer = null;
+	
+	public void setupFtpConfiguration (String user, String password, String path)
+	{
+		m_ftpuser = user;
+		m_ftppass = password;
+		m_ftppath = path;
+	}
+	
+	public int ftpPort ()
+	{
+		return m_ftpport;
+	}
+	
+	public String ftpPass ()
+	{
+		return m_ftppass;
+	}
+	
+	public String ftpPath()
+	{
+		return m_ftppath;
+	}
+	
+	public String ftpUser()
+	{
+		return m_ftpuser;
+	}
 	
 	public boolean busy()
 	{

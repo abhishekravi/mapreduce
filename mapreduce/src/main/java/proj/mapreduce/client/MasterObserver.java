@@ -78,6 +78,8 @@ public class MasterObserver implements Runnable {
 
 	public static void updateServer(String reply) throws IOException
 	{
+		
+		
 		m_outstream.writeBytes(reply);
 	}
 
