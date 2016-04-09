@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.SocketException;
 
 import proj.mapreduce.job.JobRunner;
-import proj.mapreduce.utils.awshelper.S3Reader;
+import proj.mapreduce.utils.awshelper.S3Helper;
 import proj.mapreduce.utils.network.ftp.FTPServer;
 import proj.mapreduce.utils.network.ftp.FtpClient;
 
@@ -62,8 +62,8 @@ public class ClientManager {
 		switch (type) {
 		case "aws":
 
-			S3Reader reader = new S3Reader(accesskey, secretkey);
-			reader.readFromS3(bucketname, key);
+			S3Helper reader = new S3Helper(accesskey, secretkey);
+			reader.readFromS3(bucketname, key ,"");
 
 			break;
 		default:

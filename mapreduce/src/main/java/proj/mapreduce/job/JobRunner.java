@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import proj.mapreduce.client.MasterObserver;
 import proj.mapreduce.utils.FileOp;
-import proj.mapreduce.utils.awshelper.S3Reader;
+import proj.mapreduce.utils.awshelper.S3Helper;
 import proj.mapreduce.utils.network.Command;
 
 public class JobRunner {
@@ -49,7 +49,7 @@ public class JobRunner {
 			String bucketname = input.split(",")[2];
 			String accesskey = input.split(",")[3];
 			String privatekey = input.split(",")[4];
-			S3Reader reader = new S3Reader(accesskey, privatekey); 
+			S3Helper reader = new S3Helper(accesskey, privatekey); 
 
 			FileOp.createFolder(inputfolder);
 
@@ -59,7 +59,7 @@ public class JobRunner {
 				key = input.split(",")[i];
 
 				try {
-					reader.readFromS3(bucketname, key);
+					reader.readFromS3(bucketname, key, "");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
