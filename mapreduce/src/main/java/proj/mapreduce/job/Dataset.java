@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import proj.mapreduce.utils.FileOp;
 import proj.mapreduce.utils.awshelper.S3ListKeys;
 
 public class Dataset {
@@ -36,10 +37,17 @@ public class Dataset {
 	public ArrayList<List<String>> distribute(int cclient) throws IOException
 	{
 		int index = 0;
-		//Map <String, Long> filelist = S3ListKeys.getbySize(m_bucketname);
 		Map <String, Long> filelist = new HashMap<String, Long>();
-		filelist.put("hello.txt", (long)10002);
-		filelist.put("hello1.txt", (long)9000);
+		
+		switch (m_type)
+		{
+		case "aws":
+			filelist = S3ListKeys.getbySize(m_bucketname);
+			break;
+		case "local":
+			filelist = FileOp.getFileBySize(m_bucketname);
+			break;
+		}
 		
 		List<Entry<String,Long>> entryList = new ArrayList<Map.Entry<String, Long>>(filelist.entrySet());
 		ArrayList<List<String>> chunks = new ArrayList<List<String>>(cclient);
