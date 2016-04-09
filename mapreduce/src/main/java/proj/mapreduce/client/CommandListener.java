@@ -62,12 +62,11 @@ public class CommandListener{
 			
 			break;
 		case "runjob":
-			
 			String jobname = yarncommand.split(":")[2];
-			String inputname = yarncommand.split(":")[3];
-			String outputname = yarncommand.split(":")[4];
+			String dfs = yarncommand.split(":")[4];
+			String args = yarncommand.split(":")[5];
 			
-			ClientManager.runJob(jobname, inputname, outputname);
+			ClientManager.runJob(jobname, dfs, args);
 		}
 	}
 

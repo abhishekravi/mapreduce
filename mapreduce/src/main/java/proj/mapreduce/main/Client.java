@@ -12,7 +12,7 @@ public class Client {
 		
 		ClientManager m_client = new ClientManager();
 		m_client.startPinging();
-		m_client.startFtpServer();
+		//m_client.startFtpServer();
 		while (m_client.busy());
 		
 		

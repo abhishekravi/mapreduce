@@ -72,14 +72,16 @@ public class ClientManager {
 
 	}
 
-	public static void runJob(String name, String input, String output) {
+	public static void runJob(String jobname, String dfs, String args) {
 		
 		JobRunner runner = new JobRunner();
 		
-		runner.prepareInput(input);
+		runner.setArgs(args);
+		runner.prepareInput(dfs);
+		
 		try {
-			runner.runJob (name, output);
-		} catch (IOException e) {
+			runner.runJob (jobname);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		

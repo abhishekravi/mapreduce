@@ -4,35 +4,60 @@ import java.io.File;
 import java.io.IOException;
 
 import proj.mapreduce.client.MasterObserver;
+import proj.mapreduce.utils.FileOp;
 import proj.mapreduce.utils.awshelper.S3Reader;
 import proj.mapreduce.utils.network.Command;
 
 public class JobRunner {
 
 	String m_inputdir; 
-	
+	String m_args;
+
+	public void setArgs(String args)
+	{
+		m_args = args;
+	}
+
 	public void prepareInput(String input)
 	{
+		/*for aws,bucketname,accesskey,privatekey,keys:args*/
+		/*for local,path2input,keys:args*/
+		/*for ftp,ftpaddress,port,path2input,keys:args*/
+		String key;
+		String inputfolder;
 		String hdfs = input.split(",")[0];
 
 		switch (hdfs) {
+		case "local":
+			String path2inputs = input.split(",")[1];
+			inputfolder = m_args.split(",")[0];
+
+			if (FileOp.createFolder(inputfolder))
+			{
+				m_inputdir = inputfolder;
+			}
+
+			for (int i = 2; i < input.split(",").length; i++)
+			{
+				key = input.split(",")[i];
+				FileOp.readFromLocal (path2inputs, inputfolder, key);
+			}
+
+			break;
 		case "aws":
-			String key;
-			String inputfolder = input.split(",")[1];
+			inputfolder = input.split(",")[1];
 			String bucketname = input.split(",")[2];
 			String accesskey = input.split(",")[3];
 			String privatekey = input.split(",")[4];
 			S3Reader reader = new S3Reader(accesskey, privatekey); 
-		
-			
-			/*Create Folder*/
-			createFolder(inputfolder);
-			
+
+			FileOp.createFolder(inputfolder);
+
 			for (int i = 4; i < input.split(",").length; i++)
 			{
-				
+
 				key = input.split(",")[i];
-				
+
 				try {
 					reader.readFromS3(bucketname, key);
 				} catch (IOException e) {
@@ -41,53 +66,45 @@ public class JobRunner {
 			}
 
 			break;
-		case "local":
-			break;
 		default:
 			break;
 		}
 	}
-	
-	private void createFolder (String folder)
-	{
-		File dir = new File (folder);
-		if (dir.mkdirs())
-		{
-			m_inputdir = folder;
-		}
-	}
-	
-	public void runJob (String jobname, String output) throws IOException
-	{
-		// run job
-		ProcessBuilder procbuilder = new ProcessBuilder("java", "-jar", jobname);
-		Process proc = procbuilder.start();
-		
-		// wait for finish 
-		
-		/**/
-		
-		MasterObserver.updateServer(makeReply (output));
-		
 
+	public void runJob (String jobname) throws InterruptedException
+	{
+		try {
+			
+			String pbparam = "java,-jar," + m_args;
+			
+			
+			ProcessBuilder procbuilder = new ProcessBuilder(pbparam.split(","));
+			Process proc = procbuilder.start();
+			proc.waitFor();
+			
+			MasterObserver.updateServer(makeReply (m_args.split(",")[1]));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private String makeReply (String out)
 	{
 		File outdir = new File (out);
 		File [] files = outdir.listFiles();
-		
+
 		String command = Command.YARN_COMPLETE_JOB.toString();
-		
+
 		for (int i = 0; i < files.length; i++)
 		{
 			if (files[i].isFile())
 			{
 				command = command + ":" + files[i].toString();
 			}
-			
+
 		}
-		
+
 		return command;
 	}
 }
