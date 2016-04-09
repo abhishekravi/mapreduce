@@ -61,10 +61,13 @@ public class CommandListener{
 			break;
 		case "runjob":
 			String jobname = commandArgs[2];
-			String dfs = commandArgs[4];
-			String args = commandArgs[5];
+			String mode = commandArgs[4];
+			String bucketName = commandArgs[5];
+			String listOfFiles = commandArgs[6];
+			String inputToJob = commandArgs[7];
+			String outputOfJob = commandArgs[8];
 			
-			ClientManager.runJob(jobname, dfs, args);
+			ClientManager.runJob(jobname, mode, bucketname, listOfFiles, inputToJob, outputOfJob);
 		}
 	}
 
