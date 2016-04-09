@@ -39,9 +39,6 @@ public class CommandListener{
 			}
 			
 			break;
-		case "ftpserver":
-			ClientManager.startFtpServer ();
-			break;
 		case "ftpclient":
 			
 			String ftpaddress = yarncommand.split(":")[3];

@@ -51,9 +51,6 @@ public class Listener {
 			}
 
 			break;
-		case "ftpserver":
-			ClientManager.startFtpServer ();
-			break;
 		case "ftpclient":
 
 			String ftpaddress = yarncommand.split(":")[3];
@@ -65,22 +62,8 @@ public class Listener {
 
 			ClientManager.getfromClient(ftpaddress, ftpport, ftpuser, ftppass, serverfile, localfile);
 			break;
-		case "hdfs":
-
-			String type = yarncommand.split(":")[3];
-			String accesskey = yarncommand.split(":")[4];
-			String secretkey = yarncommand.split(":")[5];
-			String bucketname = yarncommand.split(":")[6];
-			String key = yarncommand.split(":")[7];
-
-			ClientManager.getfromHdfs(type, accesskey, secretkey, bucketname, key);
-
+		default:
 			break;
-		case "runjob":
-			String name = yarncommand.split(":")[2];
-			String input = yarncommand.split(":")[3];
-			String output = yarncommand.split(":")[4];
-			ClientManager.runJob(name, input, output);
 		}
 	}
 

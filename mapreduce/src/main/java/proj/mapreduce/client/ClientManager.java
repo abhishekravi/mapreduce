@@ -39,7 +39,7 @@ public class ClientManager {
 		m_busy = true;
 	}
 
-	public static void startFtpServer() {
+	public void startFtpServer() {
 
 		m_ftpserver = new FTPServer();
 		m_ftpserver.createFtpServer(ftp_server_port);
