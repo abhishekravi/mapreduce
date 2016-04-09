@@ -29,7 +29,8 @@ public class SortData {
 		}
 		String inputdir = args[0];
 		String outputdir = args[1];
-		readFiles(inputdir,outputdir);
+		readFiles(inputdir,"tempdir");
+		Merge.mergeFiles("tempdir", outputdir);
 	}
 
 	/**
