@@ -5,8 +5,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +19,7 @@ import proj.sortclient.utils.Utils;
 
 /**
  * Class to merge different files in sorted order.
+ * 
  * @author Chintan Pathak, Abhishek Ravi Chandran
  *
  */
@@ -23,19 +27,24 @@ public class Merge {
 
 	/**
 	 * method to merge all the sorted output files to form a single sorted file.
+	 * 
 	 * @param inputdir
-	 * dir path of sorted files
+	 *            dir path of sorted files
 	 * @param output
-	 * output path for merged file
+	 *            output path for merged file
 	 */
 	public static void mergeFiles(String inputdir, String output) {
 
 		File inputDir = new File(inputdir);
-		File outputFile = new File(output+"/op");
 		BufferedWriter writer = null;
-
 		try {
-			writer = new BufferedWriter(new FileWriter(outputFile));
+			Path path = Paths.get(output + "/op");
+			Files.deleteIfExists(path);
+			if (!Files.exists(path.getParent()))
+				Files.createDirectories(path.getParent());
+			Files.createFile(path);
+
+			writer = new BufferedWriter(Files.newBufferedWriter(path, Charset.defaultCharset()));
 		} catch (IOException e1) {
 			System.err.println("IOException in Merge with message - " + e1.getLocalizedMessage());
 		}
@@ -88,12 +97,12 @@ public class Merge {
 
 	/**
 	 * method to get the line with the smallest value.
+	 * 
 	 * @param lines
-	 * map of lines
+	 *            map of lines
 	 * @param readers
-	 * map of readers
-	 * @return
-	 * line to write
+	 *            map of readers
+	 * @return line to write
 	 */
 	private static Model getSmallest(Map<Integer, Model> lines, Map<Integer, BufferedReader> readers) {
 		Model smallestValue = null;
@@ -120,9 +129,9 @@ public class Merge {
 				lines.remove(smallestIndex);
 				readers.remove(smallestIndex);
 			}
-		} catch (NumberFormatException | BadDataException |IOException e) {
+		} catch (NumberFormatException | BadDataException | IOException e) {
 			System.err.println("NumberFormatException in getSmallest with message - " + e.getLocalizedMessage());
-		} 
+		}
 		return smallestValue;
 	}
 }
