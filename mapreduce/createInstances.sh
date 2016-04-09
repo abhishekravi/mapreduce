@@ -1,0 +1,1 @@
+aws ec2 run-instances --image-id ami-775e4f16 --count $1 --instance-type t2.micro --key-name testingec2 --security-groups launch-wizard-1 | grep "InstanceId" | cut -d ":" -f2 | sed 's/"//g' | sed 's/,//g' | sed 's/ //g' > instances.txt
