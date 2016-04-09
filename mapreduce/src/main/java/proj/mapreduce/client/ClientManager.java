@@ -91,21 +91,22 @@ public class ClientManager {
 
 	}
 
-	public static void runJob(String jobname, String fs, String args) {
-		
+	public static void runJob(String jobname, String mode, String bucketname, String listOfFiles, String inputToJob,
+			String outputOfJob) {
+
 		JobRunner runner = new JobRunner();
-		runner.setArgs(args);
-		if(fs.equals("aws"))
-			runner.prepareInput(fs,ClientManager.awsid, ClientManager.awskey);
+		runner.setArgs(jobname, inputToJob, outputOfJob);
+		if (mode.equals("aws"))
+			runner.prepareInput(mode, bucketname, listOfFiles, ClientManager.awsid, ClientManager.awskey);
 		else
-			runner.prepareInput(fs,"","");
-		
+			runner.prepareInput(mode,"", "", "", "");
+
 		try {
-			runner.runJob (jobname);
+			runner.runJob(jobname);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public boolean busy() {
