@@ -117,6 +117,7 @@ public class JobRunner {
 		
 		String command = Command.YARN_COMPLETE_JOB.toString();
 
+		command = command + m_clientconf.getIpaddress() + ":";
 		command = command + m_clientconf.ftpPort() + ":";
 		command = command + m_clientconf.ftpUser() + ":";
 		command = command + m_clientconf.ftpPass() + ":";

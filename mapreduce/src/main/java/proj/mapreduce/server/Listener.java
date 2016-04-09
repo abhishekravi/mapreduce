@@ -43,17 +43,14 @@ public class Listener {
 				String address = yarncommand.split(":")[4];
 				int obsrvport = Integer.parseInt(yarncommand.split(":")[3]);
 		
-				ServerManager.updateNeighbors(address, obsrvport);
-				//{
-				//	// ServerManager.startFailureDetection();
-				//	
-				//}				
+				ServerManager.updateNeighbors(address, obsrvport);				
 			}
 
 			break;
-		case "ftpclient":
+		case "jobcomp":
 
-			String ftpaddress = yarncommand.split(":")[3];
+			String [] clientreply = yarncommand.split(":");
+			String ftpaddress = clientreply[3];
 			int ftpport = Integer.parseInt(yarncommand.split(":")[4]);
 			String ftpuser = yarncommand.split(":")[5];
 			String ftppass = yarncommand.split(":")[6];

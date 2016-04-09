@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import proj.mapreduce.client.ClientConfiguration;
+import proj.mapreduce.utils.network.NetworkUtils;
 
 public class ServerConfiguration {
 	
@@ -33,33 +34,11 @@ public class ServerConfiguration {
 	private static Map <InetAddress, ClientConfiguration> m_clientconf;	
 
 	public ServerConfiguration(int nclients) {
-
-		
 		m_nclient = nclients;
 		m_neighbors = new HashMap<InetAddress, Boolean>();
 		m_clientconf = new HashMap <InetAddress, ClientConfiguration>();
 		
-		//fetching ip address of current machine
-		try {
-			Enumeration<NetworkInterface> interfaces =
-				    NetworkInterface.getNetworkInterfaces();
-				while (interfaces.hasMoreElements()) {
-				  NetworkInterface networkInterface = interfaces.nextElement();
-				  if (networkInterface.isLoopback())
-				    continue;    // Don't want to broadcast to the loopback interface
-				  for (InterfaceAddress interfaceAddress :
-				           networkInterface.getInterfaceAddresses()) {
-				    this.ip_address = interfaceAddress.getBroadcast();
-				    if (this.ip_address == null)
-				      continue;
-				    // Use the address
-				  }
-				}
-				LOGGER.info("broadcast address:" + this.ip_address.getHostAddress());
-		} catch (SocketException e) {
-			LOGGER.error(e.getMessage());
-		}
-		
+		ip_address = NetworkUtils.getBroadcastIpAddress();
 	}
 	
 	public int clientCount ()

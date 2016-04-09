@@ -62,4 +62,55 @@ public class NetworkUtils {
 		
 		return null;
 	}
+	
+	public static InetAddress getBroadcastIpAddress ()
+	{
+		InetAddress address = null;
+		
+		try {
+			Enumeration<NetworkInterface> interfaces =
+				    NetworkInterface.getNetworkInterfaces();
+				while (interfaces.hasMoreElements()) {
+				  NetworkInterface networkInterface = interfaces.nextElement();
+				  if (networkInterface.isLoopback())
+				    continue;    // Don't want to broadcast to the loopback interface
+				  for (InterfaceAddress interfaceAddress :
+				           networkInterface.getInterfaceAddresses()) {
+				    address = interfaceAddress.getBroadcast();
+				    if (address == null)
+				      continue;
+				    // Use the address
+				  }
+				}
+		} catch (SocketException e) {
+			;
+		}
+		
+		return address;
+	}
+	
+	public static InetAddress getIpAddress ()
+	{
+		InetAddress address = null;
+		
+		try {
+			Enumeration<NetworkInterface> interfaces =
+				    NetworkInterface.getNetworkInterfaces();
+				while (interfaces.hasMoreElements()) {
+				  NetworkInterface networkInterface = interfaces.nextElement();
+				  if (networkInterface.isLoopback())
+				    continue;    // Don't want to broadcast to the loopback interface
+				  for (InterfaceAddress interfaceAddress :
+				           networkInterface.getInterfaceAddresses()) {
+				    address = interfaceAddress.getAddress();
+				    if (address == null)
+				      continue;
+				  }
+				}
+		} catch (SocketException e) {
+			;
+		}
+		
+		return address;
+	}
 }

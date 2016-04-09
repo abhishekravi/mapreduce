@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.net.SocketException;
 
 import proj.mapreduce.job.JobRunner;
-import proj.mapreduce.utils.awshelper.S3Helper; 
+import proj.mapreduce.utils.awshelper.S3Helper;
+import proj.mapreduce.utils.network.NetworkUtils;
 import proj.mapreduce.utils.network.ftp.FTPServer;
 import proj.mapreduce.utils.network.ftp.FtpClient;
 
@@ -18,12 +19,13 @@ public class ClientManager {
 	static String awsid;
 	static String awskey;
 	static ClientConfiguration m_clientconf;
-	
+
 	public ClientManager(String awsid, String awskey){
 		ClientManager.awsid = awsid;
 		ClientManager.awskey = awskey;
 		
 		m_clientconf = new ClientConfiguration();
+		m_clientconf.setIpaddressbyName(NetworkUtils.getIpAddress().getHostName());
 	}
 	
 	public ClientManager(String awsid, String awskey, String ftpuser, String ftppass, String ftppath)

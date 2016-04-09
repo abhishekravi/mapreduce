@@ -52,12 +52,14 @@ public class ClientObserver implements Runnable {
 		
 		
 		while(m_active){
-			try{
-				
-				sendCommand("yarn:runjob\n");
-				
+			try{		
 				reply = m_instream.readLine();
-				// Listener.takeAction(reply);
+				
+				if (reply != null)
+				{
+					Listener.takeAction(reply);
+				}
+				
 			
 			}catch (IOException e) {
 				System.out.println("Read failed");
