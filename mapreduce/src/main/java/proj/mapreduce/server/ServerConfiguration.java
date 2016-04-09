@@ -7,9 +7,13 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import proj.mapreduce.client.ClientConfiguration;
 
 public class ServerConfiguration {
 	
@@ -24,12 +28,15 @@ public class ServerConfiguration {
 	int	m_ping_timeout;
 	int m_ping_frequency;
 	HashMap<InetAddress, Boolean> m_neighbors;
-
+	private static Map <InetAddress, ClientConfiguration> m_clientconf;	
 
 	public ServerConfiguration(int nclients, String address) {
+
 		
 		m_nclient = nclients;
 		m_neighbors = new HashMap<InetAddress, Boolean>();
+		m_clientconf = new HashMap <InetAddress, ClientConfiguration>();
+		
 		//fetching ip address of current machine
 		try {
 			Enumeration<NetworkInterface> interfaces =
@@ -49,7 +56,14 @@ public class ServerConfiguration {
 				LOGGER.info("broadcast address:" + this.ip_address.getHostAddress());
 		} catch (SocketException e) {
 			LOGGER.error(e.getMessage());
-		} 
+		}
+		
+		try {
+			this.ip_address = InetAddress.getByName("172.16.202.255");
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public int clientCount ()
@@ -75,9 +89,14 @@ public class ServerConfiguration {
 	public boolean updateClient (String address)
 	{
 		try {
-			if (!m_neighbors.containsKey(InetAddress.getByName(address)))
+			if (!m_clientconf.containsKey(InetAddress.getByName(address)))
 			{
-				m_neighbors.put(InetAddress.getByName(address), true);
+				ClientConfiguration clientconf = new ClientConfiguration();
+				clientconf.setIpaddressbyName(address);
+				clientconf.updateStatus(false);
+				
+				m_clientconf.put(InetAddress.getByName(address), clientconf);
+				
 				return true;
 			}
 			
@@ -88,8 +107,36 @@ public class ServerConfiguration {
 		return false;
 	}
 	
-	public HashMap<InetAddress, Boolean> 	neighbors()
+	public int	activeNeighbors()
 	{
-		return m_neighbors;
+		return m_clientconf.size();
 	}
+	
+	public Map <InetAddress, ClientConfiguration> getClientConfiguration()
+	{
+		return m_clientconf;
+	}
+	
+	public boolean addObserver(String address, ClientObserver observer)
+	{
+		try {
+			if (m_clientconf.containsKey(InetAddress.getByName(address)))
+			{
+				m_clientconf.get(InetAddress.getByName(address)).setObserver(observer);
+				return true;
+			}
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public ClientObserver observedClient(InetAddress ipaddress) {
+		
+		if (m_clientconf.containsKey(ipaddress));
+		{
+			return m_clientconf.get(ipaddress).observer();
+		}
+	}
+	 
 }

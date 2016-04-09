@@ -19,7 +19,7 @@ public class Server {
 
 		ServerManager m_server = null;
 
-		if (args.length < 5) {
+		if (args.length < 4) {
 			return;
 		}
 		LOGGER.info("args:" + args.toString());
@@ -27,10 +27,10 @@ public class Server {
 		String jobfile = args[1];
 		String input = args[2];
 		String output = args[3];
-		String address = args[4];
+		//String address = args[4];
 
 		try {
-			m_server = new ServerManager(nclient, jobfile, input, output, address);
+			m_server = new ServerManager(nclient, jobfile, input, output, "");
 			m_server.start();
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -36,17 +36,37 @@ public class ServerManager {
 	static private ThreadGroup 		m_clientobsthgrp;
 	static private JobScheduler m_jscheduler;
 	static private DatasetScheduler m_dsheduler;
-	static private Map <InetAddress, ClientObserver> m_clientobservers;
+	
 	
 	public ServerManager(int nclient, String jobname, String input, String output, String address) throws IOException
 	{
-		m_clientobservers = new HashMap<InetAddress, ClientObserver>();
 		m_serverconf = new ServerConfiguration(nclient, address);
 		
-		buildScheduler(jobname);
+		buildScheduler();
+		buildJobPool(jobname, input, output);
 		buidDatasetScheduler(input);
+	
 		m_clientobsthgrp = new ThreadGroup("Client Observers");
 		
+	}
+
+	
+	private void buildScheduler ()
+	{
+		m_jscheduler = new JobScheduler(m_serverconf);
+	}
+	
+	public static void buildJobPool (String jobs, String input, String output)
+	{
+		m_jscheduler.buid (jobs, input, output, m_serverconf.clientCount());
+	}
+	
+	public static void buidDatasetScheduler (String input)
+	{
+		m_dsheduler = new DatasetScheduler(m_serverconf);
+		
+		Dataset dataset = new Dataset(input);
+		m_dsheduler.addDataset(dataset);
 	}
 
 
@@ -54,8 +74,6 @@ public class ServerManager {
 	{
 		NetworkDiscovery netdisk = new NetworkDiscovery(m_serverconf);
 		netdisk.discover();
-		
-		
 	}
 
 	public void stop ()
@@ -63,13 +81,12 @@ public class ServerManager {
 		stopFailureDetection();
 	}
 
-
 	public static void startFailureDetection() throws SocketException
 	{
 		if (m_serverconf.clientCount() == 0)
 		{
-			m_ping_timer_task = new PingTask(m_serverconf.neighbors(), m_serverconf.pingTimeout());
-			m_ping_timer.scheduleAtFixedRate(m_ping_timer_task, 0, m_serverconf.pingFrequency());
+			//m_ping_timer_task = new PingTask(m_serverconf.neighbors(), m_serverconf.pingTimeout());
+			//m_ping_timer.scheduleAtFixedRate(m_ping_timer_task, 0, m_serverconf.pingFrequency());
 		}
 	}
 
@@ -88,14 +105,13 @@ public class ServerManager {
 	 */
 	public static void startObserver(String address, int port) {
 				
-		try {
-			ClientObserver clientobs = new ClientObserver (m_clientobsthgrp, address, port);
-			LOGGER.info("address:" + address);
+		LOGGER.info("address:" + address);
+		
+		ClientObserver clientobs = new ClientObserver (m_clientobsthgrp, address, port);
+		
+		if (m_serverconf.addObserver(address, clientobs))
+		{
 			clientobs.start();
-			m_clientobservers.put(InetAddress.getByName(address), clientobs);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -103,44 +119,48 @@ public class ServerManager {
 	{
 
 	}
-	
-	public static void buildScheduler (String jobs)
+
+	public static boolean updateNeighbors (String address, int obsrvport)
 	{
-		m_jscheduler = new JobScheduler();
-		m_jscheduler.buid (jobs, m_serverconf.clientCount());
-	}
-	
-	public static void buidDatasetScheduler (String input)
-	{
-		m_dsheduler = new DatasetScheduler();
-		
-		try {
-			Dataset dataset = new Dataset(input);
-			dataset.distribute(m_serverconf.clientCount());
-			m_dsheduler.addDataset(dataset);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (!m_serverconf.updateClient(address))
+		{
+			return false;
 		}
 		
+		ServerManager.startObserver (address, obsrvport);	
+		
+		if (m_serverconf.activeNeighbors() >= m_serverconf.clientCount())
+		{
+			ServerManager.startScheduling();
+			NetworkDiscovery.stop();
+		}
+
+		return true;
 	}
+
+	
 	
 	public static void startScheduling ()
 	{
+	
+		m_dsheduler.schedule();
+		
 		for (int i = 0; i < m_serverconf.clientCount(); i++)
 		{
 			
 			KeyPair<Job, ClientConfiguration> pair = m_jscheduler.scheduleNextJob();
 	
-			if (m_clientobservers.containsKey(pair.getRight().getIpaddress()))
+			if (m_serverconf.observedClient(pair.getRight().getIpaddress()).toString() != "")
 			{
 				/* create job command */
+				Job job = pair.getLeft();
+				job.addDataset("local", "/home/A7/data", m_dsheduler.getNextChunk());
+				
 				String command = Command.YARN_RUN_JOB.toString(); 
-				command = command + pair.getLeft().getJobName() + ":" + pair.getLeft().getJobInput()
-						 + ":" + pair.getLeft().getJobOutput() + "\n";
+				command = command + job.toString() + "\n";
 				
 				try {
-					m_clientobservers.get(pair.getRight().getIpaddress()).sendCommand(command);
+					m_serverconf.observedClient(pair.getRight().getIpaddress()).sendCommand(command);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

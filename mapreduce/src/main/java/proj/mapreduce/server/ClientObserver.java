@@ -30,16 +30,10 @@ public class ClientObserver implements Runnable {
 		}
 	}
 
-	public void start() throws IOException
+	public void start()
 	{
-		try {
-			if (m_active) return; 		
-			m_obsrvth.start();
-			m_obsrvth.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if (m_active) return; 		
+		m_obsrvth.start();
 	}
 
 	public void stop() throws IOException

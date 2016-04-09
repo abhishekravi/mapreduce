@@ -43,11 +43,11 @@ public class Listener {
 				String address = yarncommand.split(":")[4];
 				int obsrvport = Integer.parseInt(yarncommand.split(":")[3]);
 		
-				if (NetworkDiscovery.updateneighbors(address))
-				{
-					// ServerManager.startFailureDetection();
-					ServerManager.startObserver (address, obsrvport);	
-				}				
+				ServerManager.updateNeighbors(address, obsrvport);
+				//{
+				//	// ServerManager.startFailureDetection();
+				//	
+				//}				
 			}
 
 			break;

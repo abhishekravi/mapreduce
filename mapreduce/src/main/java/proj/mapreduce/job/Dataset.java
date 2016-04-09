@@ -2,6 +2,7 @@ package proj.mapreduce.job;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,9 +36,18 @@ public class Dataset {
 	public ArrayList<List<String>> distribute(int cclient) throws IOException
 	{
 		int index = 0;
-		Map <String, Long> filelist = S3ListKeys.getbySize(m_bucketname);
+		//Map <String, Long> filelist = S3ListKeys.getbySize(m_bucketname);
+		Map <String, Long> filelist = new HashMap<String, Long>();
+		filelist.put("hello.txt", (long)10002);
+		filelist.put("hello1.txt", (long)9000);
+		
 		List<Entry<String,Long>> entryList = new ArrayList<Map.Entry<String, Long>>(filelist.entrySet());
 		ArrayList<List<String>> chunks = new ArrayList<List<String>>(cclient);
+		
+		for (int i = 0; i < cclient; i++)
+		{
+			chunks.add(new ArrayList<String>());
+		}
 		
 		
 		while (!entryList.isEmpty())

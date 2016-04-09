@@ -6,11 +6,15 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ser.std.InetAddressSerializer;
 
+import proj.mapreduce.server.ClientObserver;
+
 public class ClientConfiguration {
 
 	boolean m_active = false;
-	static InetAddress m_address;
+	InetAddress m_address;
 	final static int serverport = 9182;
+	final static int ftpport = 8291;
+	ClientObserver 	 m_observer = null;
 	
 	public boolean busy()
 	{
@@ -37,7 +41,7 @@ public class ClientConfiguration {
 		return m_address;
 	}
 	
-	public static void setIpaddressbyName (String ipaddr)
+	public void setIpaddressbyName (String ipaddr)
 	{
 		try {
 			m_address = InetAddress.getByName(ipaddr);
@@ -46,4 +50,15 @@ public class ClientConfiguration {
 		}
 		
 	}
+	
+	public void setObserver(ClientObserver observer)
+	{
+		m_observer = observer;
+	}
+	
+	public ClientObserver observer()
+	{
+		return m_observer;
+	}
+	
 }

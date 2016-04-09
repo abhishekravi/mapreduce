@@ -5,9 +5,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import proj.mapreduce.client.ClientConfiguration;
 import proj.mapreduce.server.Listener;
 import proj.mapreduce.server.ServerConfiguration;
 import proj.mapreduce.server.ServerManager;
@@ -25,7 +27,6 @@ public class NetworkDiscovery {
 	private static int discoveryport = 54321;
 	private static boolean m_active = false;
 	private static DatagramSocket 	m_bcsocket;
-
 	private static ServerConfiguration m_serverconf;
 
 	public NetworkDiscovery(ServerConfiguration serverconf) {
@@ -37,8 +38,9 @@ public class NetworkDiscovery {
 		m_disctimer = new Timer();
 		m_bcsocket = createDatagramConnection ();
 
-		listen ();
 		sendDiscoveryPacket ();
+		listen ();
+		
 		
 	}
 
@@ -65,7 +67,9 @@ public class NetworkDiscovery {
 	{
 		byte [] buf = Command.YARN_DETECT.toString().getBytes();
 
-		while (m_active)
+		
+		
+		//while (m_active)
 		{
 			try {
 
@@ -128,22 +132,6 @@ public class NetworkDiscovery {
 			e.printStackTrace();
 		}*/
 
-	}
-
-	public static boolean updateneighbors (String address)
-	{
-		if (!m_serverconf.updateClient(address))
-		{
-			return false;
-		}
-
-		if (m_serverconf.neighbors().size() >= m_serverconf.clientCount())
-		{
-			ServerManager.startScheduling();
-//			stop ();
-		}
-
-		return true;
 	}
 
 	public static void stop ()
