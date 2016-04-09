@@ -1,9 +1,16 @@
 package proj.mapreduce.job;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+
+import org.apache.commons.net.io.SocketOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import proj.mapreduce.client.MasterObserver;
+import proj.mapreduce.main.Server;
 import proj.mapreduce.utils.FileOp;
 import proj.mapreduce.utils.Utils;
 import proj.mapreduce.utils.awshelper.S3Helper;
@@ -13,6 +20,7 @@ public class JobRunner {
 
 	String m_inputdir; 
 	String m_args;
+	private static Logger LOGGER = LoggerFactory.getLogger(JobRunner.class);
 
 	public void setArgs(String args)
 	{
@@ -50,15 +58,15 @@ public class JobRunner {
 			String bucketname = inputArgs[2];
 			S3Helper reader = new S3Helper(awsid, awskey); 
 
-			FileOp.createFolder(inputfolder);
+			FileOp.createFolder("input");
 
-			for (int i = 4; i < inputArgs.length; i++)
+			for (int i = 3; i < inputArgs.length; i++)
 			{
 
 				key = inputArgs[i];
 
 				try {
-					reader.readFromS3(bucketname, key, "");
+					reader.readFromS3(bucketname, inputfolder + "/" + key, "input/");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -76,9 +84,18 @@ public class JobRunner {
 			
 			String pbparam = "java,-jar," + m_args;
 			
-			
 			ProcessBuilder procbuilder = new ProcessBuilder(pbparam.split(","));
 			Process proc = procbuilder.start();
+			
+			BufferedReader errorStream = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+			BufferedReader inputStream = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+			String line;
+			while((line = errorStream.readLine()) != null){
+				LOGGER.error(line);
+			}
+			while((line = inputStream.readLine()) != null){
+				LOGGER.info(line);
+			}
 			proc.waitFor();
 			
 			MasterObserver.updateServer(makeReply (m_args.split(",")[1]));
