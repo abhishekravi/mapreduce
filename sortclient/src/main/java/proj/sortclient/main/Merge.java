@@ -53,7 +53,7 @@ public class Merge {
 		int counter = 0;
 
 		for (File file : inputDir.listFiles()) {
-			if (file.exists()) {
+			if (file.exists() && file.getName().endsWith(".gz")) {
 				try {
 					readers.put(counter++, new BufferedReader(new FileReader(file)));
 				} catch (FileNotFoundException e) {
