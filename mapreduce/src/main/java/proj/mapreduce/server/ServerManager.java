@@ -38,13 +38,14 @@ public class ServerManager {
 	static private DatasetScheduler m_dsheduler;
 	
 	
-	public ServerManager(int nclient, String jobname, String input, String output, String address) throws IOException
+	public ServerManager(int nclient, String job, String mode, String bucketname) throws IOException
 	{
-		m_serverconf = new ServerConfiguration(nclient, address);
+		m_serverconf = new ServerConfiguration(nclient);
+		String [] jobargs = job.split(",");
 		
 		buildScheduler();
-		buildJobPool(jobname, input, output);
-		buidDatasetScheduler(input);
+		buildJobPool(jobargs[0], jobargs[1], jobargs[2]);
+		buidDatasetScheduler(mode, bucketname);
 	
 		m_clientobsthgrp = new ThreadGroup("Client Observers");
 		
@@ -61,11 +62,11 @@ public class ServerManager {
 		m_jscheduler.buid (jobs, input, output, m_serverconf.clientCount());
 	}
 	
-	public static void buidDatasetScheduler (String input)
+	public static void buidDatasetScheduler (String mode, String bucketname)
 	{
 		m_dsheduler = new DatasetScheduler(m_serverconf);
 		
-		Dataset dataset = new Dataset(input);
+		Dataset dataset = new Dataset(mode, bucketname);
 		m_dsheduler.addDataset(dataset);
 	}
 

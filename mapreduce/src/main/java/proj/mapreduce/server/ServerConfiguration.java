@@ -32,7 +32,7 @@ public class ServerConfiguration {
 	String awskey;
 	private static Map <InetAddress, ClientConfiguration> m_clientconf;	
 
-	public ServerConfiguration(int nclients, String address) {
+	public ServerConfiguration(int nclients) {
 
 		
 		m_nclient = nclients;

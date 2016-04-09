@@ -24,13 +24,13 @@ public class Server {
 		}
 		LOGGER.info("args:" + args.toString());
 		int nclient = Integer.parseInt(args[0]);
-		String jobfile = args[1];
-		String input = args[2];
-		String output = args[3];
+		String jobfile = args[1]; /*job.jar,input,output*/
+		String mode = args[2]; /* aws, locl or hdfs*/
+		String bucket = args[3]; /*bucketname*/
 		//String address = args[4];
 
 		try {
-			m_server = new ServerManager(nclient, jobfile, input, output, "");
+			m_server = new ServerManager(nclient, jobfile, mode, bucket);
 			m_server.start();
 		} catch (IOException e) {
 			e.printStackTrace();

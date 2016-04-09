@@ -29,8 +29,9 @@ public class Dataset {
 		m_bucketname = bucketname;
 	}
 	
-	public Dataset(String bucketname)
+	public Dataset(String type, String bucketname)
 	{
+		m_type = type;
 		m_bucketname = bucketname;
 	}
 	
