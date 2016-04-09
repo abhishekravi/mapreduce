@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 import static java.nio.file.StandardCopyOption.*;
 
@@ -26,6 +27,25 @@ public class FileOp {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static HashMap<String, Long> getFileBySize(String input)
+	{
+		File file = new File (input);
+		HashMap<String, Long> filelist = new HashMap<String, Long>();
+		File [] files;
+		
+		if (file.isDirectory())
+		{
+			files = file.listFiles();
+			
+			for (int i = 0; i < files.length; i++)
+			{
+				filelist.put(files[i].getName(), files[i].length());
+			}
+		}
+		
+		return filelist;
 	}
 	
 }
