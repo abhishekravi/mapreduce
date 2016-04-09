@@ -28,6 +28,8 @@ public class ServerConfiguration {
 	int	m_ping_timeout;
 	int m_ping_frequency;
 	HashMap<InetAddress, Boolean> m_neighbors;
+	String awsid;
+	String awskey;
 	private static Map <InetAddress, ClientConfiguration> m_clientconf;	
 
 	public ServerConfiguration(int nclients, String address) {
@@ -58,12 +60,6 @@ public class ServerConfiguration {
 			LOGGER.error(e.getMessage());
 		}
 		
-		try {
-			this.ip_address = InetAddress.getByName("172.16.202.255");
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	public int clientCount ()

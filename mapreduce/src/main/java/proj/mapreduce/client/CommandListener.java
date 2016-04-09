@@ -22,17 +22,17 @@ public class CommandListener{
 	
 	private static void ParseYarnCommand (String yarncommand) throws IOException
 	{
-		String command = yarncommand.split(":")[1];
-		String arg = yarncommand.split(":")[2];
+		String commandArgs[] = yarncommand.split(":");
+		String command = commandArgs[1];
 		
 		switch (command)
 		{
 		case "detect":
-			
+			String arg = commandArgs[2];
 			if (arg.equals("x"))
 			{
-				String address = yarncommand.split(":")[3];
-				String port = yarncommand.split(":")[4];
+				String address = commandArgs[3];
+				String port = commandArgs[4];
 				String reply = address + "," + port + "," + "yarn:" + command + ":yes"; 
 				PingTask.sendPingReply(reply);
 				ClientManager.startObserver ();
@@ -41,30 +41,28 @@ public class CommandListener{
 			break;
 		case "ftpclient":
 			
-			String ftpaddress = yarncommand.split(":")[3];
-			int ftpport = Integer.parseInt(yarncommand.split(":")[4]);
-			String ftpuser = yarncommand.split(":")[5];
-			String ftppass = yarncommand.split(":")[6];
-			String serverfile = yarncommand.split(":")[7];
+			String ftpaddress = commandArgs[3];
+			int ftpport = Integer.parseInt(commandArgs[4]);
+			String ftpuser = commandArgs[5];
+			String ftppass = commandArgs[6];
+			String serverfile = commandArgs[7];
 			String localfile = System.getProperty("user.dir") + serverfile;
 			
 			ClientManager.getfromClient(ftpaddress, ftpport, ftpuser, ftppass, serverfile, localfile);
 			break;
 		case "hdfs":
 			
-			String type = yarncommand.split(":")[3];
-			String accesskey = yarncommand.split(":")[4];
-			String secretkey = yarncommand.split(":")[5];
-			String bucketname = yarncommand.split(":")[6];
-			String key = yarncommand.split(":")[7];
+			String type = commandArgs[3];
+			String bucketname = commandArgs[6];
+			String key = commandArgs[7];
 			
-			ClientManager.getfromHdfs(type, accesskey, secretkey, bucketname, key);
+			ClientManager.getfromHdfs(type, bucketname, key);
 			
 			break;
 		case "runjob":
-			String jobname = yarncommand.split(":")[2];
-			String dfs = yarncommand.split(":")[4];
-			String args = yarncommand.split(":")[5];
+			String jobname = commandArgs[2];
+			String dfs = commandArgs[4];
+			String args = commandArgs[5];
 			
 			ClientManager.runJob(jobname, dfs, args);
 		}

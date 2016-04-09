@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-import proj.mapreduce.client.CommandListener;
-
 public class ClientObserver implements Runnable {
 
 	private Socket m_clientsocket;
@@ -56,7 +54,7 @@ public class ClientObserver implements Runnable {
 		while(m_active){
 			try{
 				
-				sendCommand("yarn:hellomania\n");
+				sendCommand("yarn:runjob\n");
 				
 				reply = m_instream.readLine();
 				// Listener.takeAction(reply);

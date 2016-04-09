@@ -15,7 +15,14 @@ public class ClientManager {
 	static PingTask m_pingtask = null;
 	static FTPServer m_ftpserver = null;
 	static FtpClient m_ftpclient = null;
+	static String awsid;
+	static String awskey;
 
+	public ClientManager(String awsid, String awskey){
+		ClientManager.awsid = awsid;
+		ClientManager.awskey = awskey;
+	}
+	
 	static final int ftp_server_port = 8080;
 
 	/* Run a thread to listen for received command in client/server tcp mode */
@@ -56,13 +63,12 @@ public class ClientManager {
 		m_ftpclient.stop();
 	}
 
-	public static void getfromHdfs(String type, String accesskey,
-			String secretkey, String bucketname, String key) throws IOException {
+	public static void getfromHdfs(String type, String bucketname, String key) throws IOException {
 
 		switch (type) {
 		case "aws":
 
-			S3Helper reader = new S3Helper(accesskey, secretkey);
+			S3Helper reader = new S3Helper(ClientManager.awsid, ClientManager.awskey);
 			reader.readFromS3(bucketname, key ,"");
 
 			break;
@@ -72,12 +78,14 @@ public class ClientManager {
 
 	}
 
-	public static void runJob(String jobname, String dfs, String args) {
+	public static void runJob(String jobname, String fs, String args) {
 		
 		JobRunner runner = new JobRunner();
-		
 		runner.setArgs(args);
-		runner.prepareInput(dfs);
+		if(fs.equals("aws"))
+			runner.prepareInput(fs,ClientManager.awsid, ClientManager.awskey);
+		else
+			runner.prepareInput(fs,"","");
 		
 		try {
 			runner.runJob (jobname);

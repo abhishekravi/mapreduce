@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import proj.mapreduce.client.MasterObserver;
 import proj.mapreduce.utils.FileOp;
+import proj.mapreduce.utils.Utils;
 import proj.mapreduce.utils.awshelper.S3Helper;
 import proj.mapreduce.utils.network.Command;
 
@@ -18,18 +19,18 @@ public class JobRunner {
 		m_args = args;
 	}
 
-	public void prepareInput(String input)
+	public void prepareInput(String input, String awsid, String awskey)
 	{
-		/*for aws,bucketname,accesskey,privatekey,keys:args*/
-		/*for local,path2input,keys:args*/
-		/*for ftp,ftpaddress,port,path2input,keys:args*/
 		String key;
 		String inputfolder;
-		String hdfs = input.split(",")[0];
+		String[] inputArgs = Utils.parseCSV(input);
+		String fileSystem = inputArgs[0];
+		
+		
 
-		switch (hdfs) {
+		switch (fileSystem) {
 		case "local":
-			String path2inputs = input.split(",")[1];
+			String path2inputs = inputArgs[1];
 			inputfolder = m_args.split(",")[0];
 
 			if (FileOp.createFolder(inputfolder))
@@ -37,26 +38,24 @@ public class JobRunner {
 				m_inputdir = inputfolder;
 			}
 
-			for (int i = 2; i < input.split(",").length; i++)
+			for (int i = 2; i < inputArgs.length; i++)
 			{
-				key = input.split(",")[i];
+				key = inputArgs[i];
 				FileOp.readFromLocal (path2inputs, inputfolder, key);
 			}
 
 			break;
 		case "aws":
-			inputfolder = input.split(",")[1];
-			String bucketname = input.split(",")[2];
-			String accesskey = input.split(",")[3];
-			String privatekey = input.split(",")[4];
-			S3Helper reader = new S3Helper(accesskey, privatekey); 
+			inputfolder = inputArgs[1];
+			String bucketname = inputArgs[2];
+			S3Helper reader = new S3Helper(awsid, awskey); 
 
 			FileOp.createFolder(inputfolder);
 
-			for (int i = 4; i < input.split(",").length; i++)
+			for (int i = 4; i < inputArgs.length; i++)
 			{
 
-				key = input.split(",")[i];
+				key = inputArgs[i];
 
 				try {
 					reader.readFromS3(bucketname, key, "");

@@ -12,7 +12,7 @@ import java.util.List;
 
 import com.sun.org.apache.xerces.internal.xs.StringList;
 
-public class utils {
+public class NetworkUtils {
 
 	public StringList getIp () throws SocketException {
 		
