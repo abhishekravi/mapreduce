@@ -31,6 +31,21 @@ public class JobRunner {
 		m_args = jobName + "," + inputToJob + "," + outputOfJob;
 	}
 
+	/**
+	 * method to download files to be processed by the job.
+	 * @param mode
+	 * running mode
+	 * @param inputToJob
+	 * input dir to job
+	 * @param bucketname
+	 * bucket
+	 * @param listOfFiles
+	 * files to get
+	 * @param awsid
+	 * awsid
+	 * @param awskey
+	 * awskey
+	 */
 	public void prepareInput(String mode, String inputToJob, String bucketname, String listOfFiles, String awsid, String awskey) {
 //		String key;
 //		String inputfolder;
