@@ -87,42 +87,50 @@ public class Job implements Comparable<Job> {
 	@Override
 	public String toString()
 	{
-		/*for aws: jobname:mainclass:aws,bucketname,accesskey,privatekey,keys:args*/
+		/*for aws: jobname:mainclass:aws,bucketname,keys:args*/
 		/*for local: jobname:mainclass:local,path2input,keys:args*/
 		/*for ftp: jobname:mainclass:ftp,ftpaddress,port,path2input,keys:args*/
 		
-		String job = m_configuration.jobName() + "::" + makeInput() + ":";
+		String job = m_configuration.jobName() + ":class:" + makeInput() + ":";
 		
 		for (int i = 0; i < m_configuration.jobArgs().length; i++)
 		{
 			job += m_configuration.jobArgs()[i];
-			job += ",";
+			job += ":";
 		}
-		
-		job = job.substring(0, job.lastIndexOf(","));
-		
 		return job;
 		
 	}
 	
 	private String makeInput ()
 	{
+		Iterator<String> itr = m_dataset.iterator();
+		int i =0;
 		String input = "null";
 		switch (m_dfstype) {
 		case "aws":
+			input = m_dfstype + ":" + m_bucketname+":";
+			while (itr.hasNext())
+			{
+				input += itr.next();
+				input+= ",";
+				i++;
+				if(i==2)
+					break;
+			}
+			input = input.substring(0, input.lastIndexOf(","));
 			break;
 		case "ftp":
 			break;
 		case "local":
 			
 			input = m_dfstype + "," + m_bucketname;
-			
-			Iterator<String> itr = m_dataset.iterator();
 			while (itr.hasNext())
 			{
-				input += ",";
 				input += itr.next();
+				input+= ",";
 			}
+			input = input.substring(0, input.lastIndexOf(","));
 			
 			break;
 			

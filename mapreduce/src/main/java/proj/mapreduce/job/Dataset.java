@@ -18,6 +18,7 @@ public class Dataset {
 	String m_user;
 	String m_password;
 	String m_bucketname;
+	String m_folder;
 	
 	Dataset (String type, String bucketname, String accesskey, String secretkey, String user, String password)
 	{
@@ -29,10 +30,13 @@ public class Dataset {
 		m_bucketname = bucketname;
 	}
 	
-	public Dataset(String type, String bucketname)
+	public Dataset(String type, String bucketname, String folder, String awsid, String awskey)
 	{
 		m_type = type;
 		m_bucketname = bucketname;
+		m_accesskey = awsid;
+		m_secretkey = awskey;
+		m_folder = folder;
 	}
 	
 	public ArrayList<List<String>> distribute(int cclient) throws IOException
@@ -43,7 +47,7 @@ public class Dataset {
 		switch (m_type)
 		{
 		case "aws":
-			filelist = S3ListKeys.getbySize(m_bucketname);
+			filelist = S3ListKeys.getbySize(m_bucketname, m_folder, m_accesskey, m_secretkey);
 			break;
 		case "local":
 			filelist = FileOp.getFileBySize(m_bucketname);
@@ -63,6 +67,9 @@ public class Dataset {
 		{
 			chunks.get(index).add(entryList.get(0).getKey());
 			entryList.remove(0);
+			
+			if (entryList.isEmpty())
+				break;
 			
 			chunks.get(index).add(entryList.get(entryList.size()-1).getKey());
 			entryList.remove(entryList.size()-1);
