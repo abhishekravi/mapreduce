@@ -10,111 +10,98 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 /**
+ * observer class that communicates with master.
  * 
  * @author root
  *
  */
 public class MasterObserver implements Runnable {
 
-	Thread m_observeth;
-	boolean m_active = false;
-	int m_port = 6789;
-	InetAddress m_serverip;
-	ServerSocket m_serversocket;
-	Socket		 m_clientsocket;
-	static DataOutputStream m_outstream;
-	BufferedReader m_instream;
+	Thread observer;
+	boolean active = false;
+	int port = 6789;
+	InetAddress serverip;
+	ServerSocket serversocket;
+	Socket clientsocket;
+	static DataOutputStream outstream;
+	BufferedReader instream;
 
 	/**
+	 * setting address of observer.
 	 * 
 	 * @param serverip
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-	MasterObserver (InetAddress serverip) throws UnknownHostException, IOException
-	{
-		m_serverip = serverip;
+	MasterObserver(InetAddress serverip) throws UnknownHostException, IOException {
+		this.serverip = serverip;
 	}
 
 	/**
+	 * start the observer
 	 * 
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-	public void start() throws UnknownHostException, IOException
-	{
-		if (m_active) return;
-
-		m_serversocket = new ServerSocket(ClientConfiguration.serverport); 
-		createObserveTh();		
+	public void start() throws UnknownHostException, IOException {
+		if (active)
+			return;
+		serversocket = new ServerSocket(ClientConfiguration.serverport);
+		observer = new Thread(this, "observation thread");
+		observer.start();
 	}
 
 	/**
+	 * stop the observer.
 	 * 
 	 * @throws IOException
 	 */
-	public void stop() throws IOException
-	{
-		m_active = false;
-		m_outstream.close();
-		m_instream.close();
-		m_serversocket.close(); 
+	public void stop() throws IOException {
+		active = false;
+		outstream.close();
+		instream.close();
+		serversocket.close();
 	}
 
 	/**
+	 * setup the connection.
 	 * 
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-	private void setupConnection() throws UnknownHostException, IOException 
-	{
-		m_clientsocket = m_serversocket.accept(); 
-		m_outstream = new DataOutputStream(m_clientsocket.getOutputStream());
-		m_instream = new BufferedReader(new InputStreamReader(m_clientsocket.getInputStream()));
-	}
-
-	/**
-	 * 
-	 */
-	private void createObserveTh() 
-	{
-		m_observeth = new Thread(this, "observation thread");
-		m_observeth.start();		
+	private void setupConnection() throws UnknownHostException, IOException {
+		clientsocket = serversocket.accept();
+		outstream = new DataOutputStream(clientsocket.getOutputStream());
+		instream = new BufferedReader(new InputStreamReader(clientsocket.getInputStream()));
 	}
 
 	/**
 	 * 
 	 */
 	@Override
-	public void run() 
-	{
-		m_active = true;
+	public void run() {
+		active = true;
 		String command;
-
 		try {
 			setupConnection();
-			while (m_active)
-			{				
-				command = m_instream.readLine();
-				
+			while (active) {
+				command = instream.readLine();
 				CommandListener.takeAction(command);
-
 			}
 
-		} catch (IOException e1) {}
+		} catch (IOException e1) {
+		}
 
 	}
 
 	/**
+	 * send update to server.
 	 * 
 	 * @param reply
 	 * @throws IOException
 	 */
-	public static void updateServer(String reply) throws IOException
-	{
-		
-		
-		m_outstream.writeBytes(reply);
+	public static void updateServer(String reply) throws IOException {
+		outstream.writeBytes(reply);
 	}
 
 }
