@@ -5,9 +5,11 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -146,7 +148,7 @@ public class ServerManager {
 	public static void startScheduling ()
 	{
 	
-		m_dsheduler.schedule();
+		m_dsheduler.schedule(0);
 		
 		for (int i = 0; i < m_serverconf.clientCount(); i++)
 		{
@@ -169,6 +171,8 @@ public class ServerManager {
 				}
 			}
 		}
+		
+		m_dsheduler.removeDataset(0);
 	}
 	
 
@@ -191,7 +195,17 @@ public class ServerManager {
 	
 	public static void shuffle()
 	{
+		Collection <ClientConfiguration> clientaddr = m_serverconf.getClientConfiguration().values();
+		
 		/* get all clients */
+		for (ClientConfiguration conf : clientaddr)
+		{
+			if (conf.busy())
+				return;
+		}
+		
+		/* */
+		m_dsheduler.reducerSchedule();
 		
 	}
 }

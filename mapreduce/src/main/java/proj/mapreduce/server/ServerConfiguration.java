@@ -32,7 +32,8 @@ public class ServerConfiguration {
 	String awsid;
 	String awskey;
 	private static Map <InetAddress, ClientConfiguration> m_clientconf;	
-
+	int m_reducercount = 1;
+	
 	public ServerConfiguration(int nclients) {
 		m_nclient = nclients;
 		m_neighbors = new HashMap<InetAddress, Boolean>();
@@ -112,6 +113,16 @@ public class ServerConfiguration {
 		{
 			return m_clientconf.get(ipaddress).observer();
 		}
+	}
+	
+	public void setReducerCount (int count)
+	{
+		m_reducercount = count;
+	}
+	
+	public int reducerCount ()
+	{
+		return m_reducercount;
 	}
 	 
 }
