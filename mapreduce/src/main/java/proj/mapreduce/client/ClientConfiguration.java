@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ser.std.InetAddressSerializer;
 
+import proj.mapreduce.job.Job;
 import proj.mapreduce.server.ClientObserver;
 
 public class ClientConfiguration {
@@ -20,6 +21,8 @@ public class ClientConfiguration {
 	static String m_ftppath;
 	
 	ClientObserver 	 m_observer = null;
+	Job				 m_assinedjob = null;
+
 	
 	public void setupFtpConfiguration (String user, String password, String path)
 	{
@@ -92,5 +95,16 @@ public class ClientConfiguration {
 	{
 		return m_observer;
 	}
+
+	public void setJob (Job job)
+	{
+		m_assinedjob = job;
+	}
+	
+	public Job job()
+	{
+		return m_assinedjob;
+	}
+
 	
 }

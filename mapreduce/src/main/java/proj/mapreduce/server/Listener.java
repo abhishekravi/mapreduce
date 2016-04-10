@@ -50,14 +50,17 @@ public class Listener {
 		case "jobcomp":
 
 			String [] clientreply = yarncommand.split(":");
-			String ftpaddress = clientreply[3];
-			int ftpport = Integer.parseInt(yarncommand.split(":")[4]);
-			String ftpuser = yarncommand.split(":")[5];
-			String ftppass = yarncommand.split(":")[6];
-			String serverfile = yarncommand.split(":")[7];
-			String localfile = System.getProperty("user.dir") + serverfile;
+			
+			String ftpaddress = clientreply[2];
+			int ftpport = Integer.parseInt(clientreply[3]);
+			String ftpuser = clientreply[4];
+			String ftppass = clientreply[5];
+			
+			String intermediatefile = clientreply[6];
 
-			ClientManager.getfromClient(ftpaddress, ftpport, ftpuser, ftppass, serverfile, localfile);
+			ServerManager.mapperComplete (ftpaddress, ftpport, ftpuser, ftppass, intermediatefile);
+			ServerManager.shuffle();
+
 			break;
 		default:
 			break;

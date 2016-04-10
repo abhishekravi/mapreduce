@@ -3,6 +3,7 @@ package proj.mapreduce.server;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -168,5 +169,29 @@ public class ServerManager {
 				}
 			}
 		}
+	}
+	
+
+	public static void mapperComplete (String ip, int port, String user, String pass, String intermediatefiles)
+	{
+		/* make the clientconf to inactive */
+		try {
+			if (m_serverconf.getClientConfiguration().keySet().contains(InetAddress.getByName(ip)))
+			{
+				m_serverconf.getClientConfiguration().get(InetAddress.getByName(ip)).updateStatus(false);;
+			}
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		
+		/* create dataset from type hdfs */
+		Dataset dataset = new Dataset(ip, port, user, pass, intermediatefiles);
+		m_dsheduler.addDataset(dataset);
+	}
+	
+	public static void shuffle()
+	{
+		/* get all clients */
+		
 	}
 }

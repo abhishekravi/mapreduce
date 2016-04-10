@@ -39,6 +39,17 @@ public class Dataset {
 		m_folder = folder;
 	}
 	
+	public Dataset(String ip, int port, String user, String pass, String intermediatefiles) {
+		m_type = "ftp";
+		m_ip = ip;
+		m_port = port;
+		m_user = user;
+		m_password = pass;
+		m_intermediatefiles = intermediatefiles;
+		
+	}
+
+	
 	public ArrayList<List<String>> distribute(int cclient) throws IOException
 	{
 		int index = 0;
