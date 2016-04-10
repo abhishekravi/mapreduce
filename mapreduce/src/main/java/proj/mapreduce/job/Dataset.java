@@ -19,6 +19,9 @@ public class Dataset {
 	String m_password;
 	String m_bucketname;
 	String m_folder;
+	String m_ip;
+	int    m_port;
+	String m_intermediatefiles;
 	
 	Dataset (String type, String bucketname, String accesskey, String secretkey, String user, String password)
 	{
