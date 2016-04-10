@@ -67,7 +67,7 @@ public class CommandListener{
 			String inputToJob = commandArgs[7];
 			String outputOfJob = commandArgs[8];
 			
-			ClientManager.runJob(jobname, mode, bucketname, listOfFiles, inputToJob, outputOfJob);
+			ClientManager.runJob(jobname, mode, bucketName, listOfFiles, inputToJob, outputOfJob);
 		}
 	}
 

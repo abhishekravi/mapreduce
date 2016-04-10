@@ -97,9 +97,9 @@ public class ClientManager {
 		JobRunner runner = new JobRunner();
 		runner.setArgs(jobname, inputToJob, outputOfJob);
 		if (mode.equals("aws"))
-			runner.prepareInput(mode, bucketname, listOfFiles, ClientManager.awsid, ClientManager.awskey);
+			runner.prepareInput(mode, bucketname, inputToJob, listOfFiles, ClientManager.awsid, ClientManager.awskey);
 		else
-			runner.prepareInput(mode,"", "", "", "");
+			runner.prepareInput(mode,"", "", "", "", "");
 
 		try {
 			runner.runJob(jobname);
