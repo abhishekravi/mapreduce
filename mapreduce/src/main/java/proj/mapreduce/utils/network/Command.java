@@ -5,7 +5,8 @@ public enum Command {
     YARN_PINGNACK 		("yarn:detect:no"),
 	YARN_PINGACK  		("yarn:detect:yes"),
 	YARN_RUN_JOB   		("yarn:runjob:"),
-	YARN_COMPLETE_JOB	("yarn:jobcomp");
+	YARN_COMPLETE_JOB	("yarn:jobcomp"),
+	YARN_DO_REDUCER  	("yarn:doreducer");
 	
     private final String text;
 

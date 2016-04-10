@@ -9,6 +9,11 @@ import proj.mapreduce.utils.network.NetworkUtils;
 import proj.mapreduce.utils.network.ftp.FTPServer;
 import proj.mapreduce.utils.network.ftp.FtpClient;
 
+/**
+ * 
+ * @author root
+ *
+ */
 public class ClientManager {
 
 	static boolean m_busy = false;
@@ -20,6 +25,11 @@ public class ClientManager {
 	static String awskey;
 	static ClientConfiguration m_clientconf;
 
+	/**
+	 * 
+	 * @param awsid
+	 * @param awskey
+	 */
 	public ClientManager(String awsid, String awskey){
 		ClientManager.awsid = awsid;
 		ClientManager.awskey = awskey;
@@ -29,6 +39,14 @@ public class ClientManager {
 		m_clientconf.setupFtpConfiguration("geust", "", "/home/ftp");
 	}
 	
+	/**
+	 * 
+	 * @param awsid
+	 * @param awskey
+	 * @param ftpuser
+	 * @param ftppass
+	 * @param ftppath
+	 */
 	public ClientManager(String awsid, String awskey, String ftpuser, String ftppass, String ftppath)
 	{
 		ClientManager.awsid = awsid;
@@ -39,7 +57,10 @@ public class ClientManager {
 		
 	}
 
-	/* Run a thread to listen for received command in client/server tcp mode */
+	
+	/**
+	 * Run a thread to listen for received command in client/server tcp mode
+	 */
 	public static void startObserver() {
 		if (m_pingtask == null)
 			return;
@@ -53,6 +74,10 @@ public class ClientManager {
 		}
 	}
 
+	/**
+	 * 
+	 * @throws SocketException
+	 */
 	public void startPinging() throws SocketException {
 
 		m_pingtask = new PingTask();
@@ -60,6 +85,9 @@ public class ClientManager {
 		m_busy = true;
 	}
 
+	/**
+	 * 
+	 */
 	public void startFtpServer() {
 
 		m_ftpserver = new FTPServer(m_clientconf);
@@ -68,6 +96,17 @@ public class ClientManager {
 
 	}
 
+	/**
+	 * 
+	 * @param server
+	 * @param port
+	 * @param user
+	 * @param password
+	 * @param serverfile
+	 * @param localfile
+	 * @throws SocketException
+	 * @throws IOException
+	 */
 	public static void getfromClient(String server, int port, String user,
 			String password, String serverfile, String localfile)
 			throws SocketException, IOException {
@@ -76,7 +115,14 @@ public class ClientManager {
 		m_ftpclient.downloadFileBlocking(serverfile, localfile);
 		m_ftpclient.stop();
 	}
-
+	
+	/**
+	 * 
+	 * @param type
+	 * @param bucketname
+	 * @param key
+	 * @throws IOException
+	 */
 	public static void getfromHdfs(String type, String bucketname, String key) throws IOException {
 
 		switch (type) {
@@ -92,6 +138,15 @@ public class ClientManager {
 
 	}
 
+	/**
+	 * 
+	 * @param jobname
+	 * @param mode
+	 * @param bucketname
+	 * @param listOfFiles
+	 * @param inputToJob
+	 * @param outputOfJob
+	 */
 	public static void runJob(String jobname, String mode, String bucketname, String listOfFiles, String inputToJob,
 			String outputOfJob) {
 
@@ -110,6 +165,10 @@ public class ClientManager {
 
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean busy() {
 		return m_busy;
 	}

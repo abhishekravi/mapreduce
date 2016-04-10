@@ -71,12 +71,15 @@ public class DatasetScheduler {
 	public ArrayList<List<String>> reducerSchedule()
 	{
 		ArrayList<List<String>> chunk = new ArrayList<List<String>>();
-		
+		Dataset ds;
 		try {
 			
 			for (int i = 0; i < m_dataset.size(); i++)
 			{	
-				ArrayList<List<String>> onechunk = m_dataset.get(i).distribute(m_serverconf.reducerCount());
+				ds = m_dataset.get(i);
+				
+				ArrayList<List<String>> onechunk = ds.distribute(m_serverconf.reducerCount());
+				onechunk.get(0).add(ds.getFtpConfig());
 				chunk.add(onechunk.get(0));
 			}
 		} catch (IOException e) {
