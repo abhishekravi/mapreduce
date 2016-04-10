@@ -2,7 +2,11 @@ package proj.mapreduce.utils.network.ftp;
 
 import org.apache.ftpserver.usermanager.PasswordEncryptor;
 
-
+/**
+ * custom password encryptor.
+ * @author raiden
+ *
+ */
 public class CostumPasswordEncryptor implements PasswordEncryptor {
 
 	//We store clear-text passwords in this example

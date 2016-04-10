@@ -10,39 +10,54 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import com.sun.org.apache.xerces.internal.xs.StringList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Network utilities.
+ * @author raiden
+ *
+ */
 public class NetworkUtils {
 
-	public StringList getIp () throws SocketException {
+	private static Logger LOGGER = LoggerFactory.getLogger(NetworkUtils.class);
+	/**
+	 * method to get list of ips.
+	 * @return
+	 * @throws SocketException
+	 */
+	public List<String> getIp () throws SocketException {
 		
-		Enumeration nics_itr = NetworkInterface.getNetworkInterfaces();
-		Enumeration addr_itr;
+		Enumeration<NetworkInterface> nics_itr = NetworkInterface.getNetworkInterfaces();
+		Enumeration<InetAddress> addr_itr;
 		List<String>  address = new ArrayList<String>();
-		
 		while(nics_itr.hasMoreElements())
 		{
 			addr_itr = ((NetworkInterface)nics_itr.nextElement()).getInetAddresses();
 			while (addr_itr.hasMoreElements())
 			{
 				address.add(((InetAddress) addr_itr.nextElement()).getHostAddress());
-				
 			}
 		}
-		
-		return null;
+		return address;
 	}
 	
 	public String getIp (String inet) {
 		return null;
 	}
 	
+	/**
+	 * get ip address.
+	 * @param inet
+	 * @return
+	 * @throws UnknownHostException
+	 * @throws SocketException
+	 */
 	public String getIp (int inet) throws UnknownHostException, SocketException {
 		
 		InetAddress localHost = Inet4Address.getLocalHost();
 		NetworkInterface networkInterface = NetworkInterface.getByInetAddress(localHost);
 		networkInterface.getInterfaceAddresses().get(0).getNetworkPrefixLength();
-		
 		return null;
 	}
 	
@@ -54,19 +69,28 @@ public class NetworkUtils {
 		return null;
 	}
 	
+	/**
+	 * get subnet.
+	 * @param inet
+	 * @return
+	 * @throws UnknownHostException
+	 * @throws SocketException
+	 */
 	public String getSubnet (int inet) throws UnknownHostException, SocketException {
 		
 		InetAddress localHost = Inet4Address.getLocalHost();
 		NetworkInterface networkInterface = NetworkInterface.getByInetAddress(localHost);
 		networkInterface.getInterfaceAddresses().get(inet).getNetworkPrefixLength();
-		
 		return null;
 	}
 	
+	/**
+	 * method to get broadcast address.
+	 * @return
+	 */
 	public static InetAddress getBroadcastIpAddress ()
 	{
 		InetAddress address = null;
-		
 		try {
 			Enumeration<NetworkInterface> interfaces =
 				    NetworkInterface.getNetworkInterfaces();
@@ -83,12 +107,16 @@ public class NetworkUtils {
 				  }
 				}
 		} catch (SocketException e) {
-			;
+			LOGGER.error(e.getMessage());
 		}
-		
+		LOGGER.info("broadcast ip:" + address.getHostAddress());
 		return address;
 	}
 	
+	/**
+	 * method to get ip address
+	 * @return
+	 */
 	public static InetAddress getIpAddress ()
 	{
 		InetAddress address = null;
@@ -108,9 +136,8 @@ public class NetworkUtils {
 				  }
 				}
 		} catch (SocketException e) {
-			;
+			LOGGER.error(e.getMessage());
 		}
-		
 		return address;
 	}
 }

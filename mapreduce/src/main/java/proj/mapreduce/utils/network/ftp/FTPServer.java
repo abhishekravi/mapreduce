@@ -22,6 +22,12 @@ import org.slf4j.LoggerFactory;
 
 import proj.mapreduce.client.ClientConfiguration;
 
+/**
+ * FTP server class.
+ * 
+ * @author raiden
+ *
+ */
 public class FTPServer {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(FTPServer.class);
@@ -29,12 +35,20 @@ public class FTPServer {
 	FtpServer ftpserver;
 	ClientConfiguration clientconf;
 
+	/**
+	 * constructor with client config.
+	 * 
+	 * @param clientconf
+	 */
 	public FTPServer(ClientConfiguration clientconf) {
 		this.clientconf = clientconf;
 		usermanager = null;
 		ftpserver = null;
 	}
 
+	/**
+	 * method to create ftp server.
+	 */
 	public void createFtpServer() {
 		Map<String, Ftplet> ftplet;
 		FtpServerFactory serverFactory;
@@ -59,6 +73,9 @@ public class FTPServer {
 		ftpserver = serverFactory.createServer();
 	}
 
+	/**
+	 * method to create user manager from property file.
+	 */
 	public void createUserManager() {
 		PropertiesUserManagerFactory userManagerFactory;
 
@@ -74,40 +91,50 @@ public class FTPServer {
 		usermanager = userManagerFactory.createUserManager();
 	}
 
+	/**
+	 * method to create user manager from property file in path.
+	 * 
+	 * @param path
+	 */
 	public void createUserManager(String path) {
 		PropertiesUserManagerFactory userManagerFactory;
-
 		userManagerFactory = new PropertiesUserManagerFactory();
 		userManagerFactory.setFile(new File(path));
 		userManagerFactory.setPasswordEncryptor(new CostumPasswordEncryptor());
-
 		usermanager = userManagerFactory.createUserManager();
 	}
 
+	/**
+	 * method to add user.
+	 * 
+	 * @param username
+	 * @param password
+	 * @param homedir
+	 */
 	public void addUser(String username, String password, String homedir) {
 		List<Authority> authorities = new ArrayList<Authority>();
 		BaseUser user = new BaseUser();
-
 		authorities.add(new WritePermission());
-
 		user.setName(username);
 		user.setPassword(password);
 		user.setHomeDirectory(homedir);
 		user.setAuthorities(authorities);
-
 		try {
 			usermanager.save(user);
-		} catch (FtpException e1) {
-			;
+		} catch (FtpException e) {
+			LOGGER.error(e.getMessage());
 		}
 
 	}
 
+	/**
+	 * start FTP server.
+	 */
 	public void start() {
 		try {
 			ftpserver.start();
-		} catch (FtpException ex) {
-			;
+		} catch (FtpException e) {
+			LOGGER.error(e.getMessage());
 		}
 	}
 }

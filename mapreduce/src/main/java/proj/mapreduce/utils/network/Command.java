@@ -1,5 +1,10 @@
 package proj.mapreduce.utils.network;
 
+/**
+ * command enum.
+ * @author raiden
+ *
+ */
 public enum Command {
     YARN_DETECT 		("yarn:detect:x"),
     YARN_PINGNACK 		("yarn:detect:no"),
