@@ -26,51 +26,39 @@ public class JobRunner {
 	ClientConfiguration m_clientconf;
 	
 	
-	public void setArgs(String args)
+	public void setArgs(String jobName, String inputToJob, String outputOfJob)
 	{
-		m_args = args;
+		m_args = jobName + "," + inputToJob + "," + outputOfJob;
 	}
 
-	public void prepareInput(String input, String awsid, String awskey)
-	{
-		String key;
-		String inputfolder;
-		String[] inputArgs = Utils.parseCSV(input);
-		String fileSystem = inputArgs[0];
-		
-		
+	public void prepareInput(String mode, String inputToJob, String bucketname, String listOfFiles, String awsid, String awskey) {
+//		String key;
+//		String inputfolder;
+		String[] fileList = Utils.parseCSV(listOfFiles);
 
-		switch (fileSystem) {
+		switch (mode) {
 		case "local":
-			String path2inputs = inputArgs[1];
-			inputfolder = m_args.split(",")[0];
-
-			if (FileOp.createFolder(inputfolder))
-			{
-				m_inputdir = inputfolder;
-			}
-
-			for (int i = 2; i < inputArgs.length; i++)
-			{
-				key = inputArgs[i];
-				FileOp.readFromLocal (path2inputs, inputfolder, key);
-			}
+//			String path2inputs = inputArgs[1];
+//			inputfolder = m_args.split(",")[0];
+//
+//			if (FileOp.createFolder(inputfolder)) {
+//				m_inputdir = inputfolder;
+//			}
+//
+//			for (int i = 2; i < inputArgs.length; i++) {
+//				key = inputArgs[i];
+//				FileOp.readFromLocal(path2inputs, inputfolder, key);
+//			}
 
 			break;
 		case "aws":
-			inputfolder = inputArgs[1];
-			String bucketname = inputArgs[2];
-			S3Helper reader = new S3Helper(awsid, awskey); 
+			S3Helper reader = new S3Helper(awsid, awskey);
+			FileOp.createFolder(inputToJob);
 
-			FileOp.createFolder("input");
-
-			for (int i = 3; i < inputArgs.length; i++)
-			{
-
-				key = inputArgs[i];
+			for(String fileName : fileList){
 
 				try {
-					reader.readFromS3(bucketname, inputfolder + "/" + key, "input/");
+					reader.readFromS3(bucketname, fileName, inputToJob);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
