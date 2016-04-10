@@ -68,7 +68,7 @@ public class FTPServer {
 			File propFile = new File(FTPServer.class.getClassLoader().getResource("users.properties").toURI());
 			userManagerFactory.setFile(propFile);
 		} catch (URISyntaxException e) {
-			LOGGER.error("error loading user.properties::exception-" + e.getMessage());
+			LOGGER.error("error loading user.properties::exception-" + e.getMessage()); 
 		}
 		userManagerFactory.setPasswordEncryptor(new CostumPasswordEncryptor());
 
