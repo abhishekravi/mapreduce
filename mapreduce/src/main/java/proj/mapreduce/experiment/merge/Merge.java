@@ -7,19 +7,43 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+
+import proj.mapreduce.exception.BadDataException;
+import proj.mapreduce.model.Model;
+import proj.mapreduce.utils.Utils;
 
 public class Merge {
 
 	public static void main(String[] args) {
+		Merge.mergeFiles(args[1], args[2]);
+	}
 
-		File inputDir = new File(args[1]);
-		File outputFile = new File(args[2]);
+	/**
+	 * method to merge all the sorted output files to form a single sorted file.
+	 * 
+	 * @param inputdir
+	 *            dir path of sorted files
+	 * @param output
+	 *            output path for merged file
+	 */
+	public static void mergeFiles(String inputdir, String output) {
+
+		File inputDir = new File(inputdir);
 		BufferedWriter writer = null;
-
 		try {
-			writer = new BufferedWriter(new FileWriter(outputFile));
+			Path path = Paths.get(output + "/op");
+			Files.deleteIfExists(path);
+			if (!Files.exists(path.getParent()))
+				Files.createDirectories(path.getParent());
+			Files.createFile(path);
+
+			writer = new BufferedWriter(Files.newBufferedWriter(path, Charset.defaultCharset()));
 		} catch (IOException e1) {
 			System.err.println("IOException in Merge with message - " + e1.getLocalizedMessage());
 		}
@@ -29,47 +53,33 @@ public class Merge {
 
 		for (File file : inputDir.listFiles()) {
 			if (file.exists()) {
-				
-				if (file.isDirectory())
-				{
-					for (File subdirfile : file.listFiles())
-					{
-						try {
-							readers.put(counter++, new BufferedReader(new FileReader(subdirfile)));
-						} catch (FileNotFoundException e) {
-							// Never going to happen
-						}
-					}
-				}
-				else
-				{
-					try {
-						readers.put(counter++, new BufferedReader(new FileReader(file)));
-					} catch (FileNotFoundException e) {
-						// Never going to happen
-					}
+				try {
+					readers.put(counter++, new BufferedReader(new FileReader(file)));
+				} catch (FileNotFoundException e) {
+					// Never going to happen
 				}
 			}
 		}
-
-		Map<Integer, Integer> lines = new HashMap<Integer, Integer>();
-
+		String line = "";
+		Map<Integer, Model> lines = new HashMap<Integer, Model>();
+		Model m;
 		for (Integer key : readers.keySet()) {
 			try {
-				lines.put(key, Integer.parseInt(readers.get(key).readLine()));
-			} catch (NumberFormatException e) {
-				System.err.println("NumberFormatException in Merge with message - " + e.getLocalizedMessage());
-			} catch (IOException e) {
-				System.err.println("IOException in Merge with message - " + e.getLocalizedMessage());
+				m = new Model();
+				line = readers.get(key).readLine();
+				m.fill(Utils.parseCSV(line), line);
+				lines.put(key, m);
+			} catch (NumberFormatException | BadDataException | IOException e) {
+				System.err.println("Exception in Merge with message - " + e.getLocalizedMessage());
 			}
 		}
 
-		Integer chosenLine;
+		Model chosenLine;
 
 		while (!readers.isEmpty()) {
 			chosenLine = getSmallest(lines, readers);
 			try {
-				writer.write(String.valueOf(chosenLine));
+				writer.write(chosenLine.record);
 				writer.newLine();
 			} catch (IOException e) {
 				System.err.println("IOException in Merge with message - " + e.getLocalizedMessage());
@@ -84,14 +94,26 @@ public class Merge {
 		}
 	}
 
-	private static Integer getSmallest(Map<Integer, Integer> lines, Map<Integer, BufferedReader> readers) {
-		Integer smallestValue = Integer.MAX_VALUE;
-		Integer smallestIndex = Integer.MAX_VALUE;
+	/**
+	 * method to get the line with the smallest value.
+	 * 
+	 * @param lines
+	 *            map of lines
+	 * @param readers
+	 *            map of readers
+	 * @return line to write
+	 */
+	private static Model getSmallest(Map<Integer, Model> lines, Map<Integer, BufferedReader> readers) {
+		Model smallestValue = null;
+		float smallVal = Float.MAX_VALUE;
+		int smallestIndex = Integer.MAX_VALUE;
 		String nextLine;
+		Model m;
 
 		for (Integer index : lines.keySet()) {
-			if (smallestValue >= lines.get(index)) {
+			if (smallVal >= lines.get(index).dryBulbTemp) {
 				smallestValue = lines.get(index);
+				smallVal = smallestValue.dryBulbTemp;
 				smallestIndex = index;
 			}
 		}
@@ -99,15 +121,15 @@ public class Merge {
 		try {
 			nextLine = readers.get(smallestIndex).readLine();
 			if (nextLine != null) {
-				lines.put(smallestIndex, Integer.parseInt(nextLine));
+				m = new Model();
+				m.fill(Utils.parseCSV(nextLine), nextLine);
+				lines.put(smallestIndex, m);
 			} else {
 				lines.remove(smallestIndex);
 				readers.remove(smallestIndex);
 			}
-		} catch (NumberFormatException e) {
+		} catch (NumberFormatException | BadDataException | IOException e) {
 			System.err.println("NumberFormatException in getSmallest with message - " + e.getLocalizedMessage());
-		} catch (IOException e) {
-			System.err.println("IOException in getSmallest with message - " + e.getLocalizedMessage());
 		}
 		return smallestValue;
 	}
