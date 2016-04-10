@@ -14,8 +14,8 @@ public class Merge {
 
 	public static void main(String[] args) {
 
-		File inputDir = new File("input");
-		File outputFile = new File("output");
+		File inputDir = new File(args[1]);
+		File outputFile = new File(args[2]);
 		BufferedWriter writer = null;
 
 		try {
@@ -29,10 +29,25 @@ public class Merge {
 
 		for (File file : inputDir.listFiles()) {
 			if (file.exists()) {
-				try {
-					readers.put(counter++, new BufferedReader(new FileReader(file)));
-				} catch (FileNotFoundException e) {
-					// Never going to happen
+				
+				if (file.isDirectory())
+				{
+					for (File subdirfile : file.listFiles())
+					{
+						try {
+							readers.put(counter++, new BufferedReader(new FileReader(subdirfile)));
+						} catch (FileNotFoundException e) {
+							// Never going to happen
+						}
+					}
+				}
+				else
+				{
+					try {
+						readers.put(counter++, new BufferedReader(new FileReader(file)));
+					} catch (FileNotFoundException e) {
+						// Never going to happen
+					}
 				}
 			}
 		}
