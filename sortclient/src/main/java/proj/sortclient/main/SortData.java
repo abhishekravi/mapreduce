@@ -45,7 +45,8 @@ public class SortData {
 		List<String> files = Utils.processDir(inputdir);
 		for (String file : files) {
 			try {
-				fileSort.sortFile(file,outputdir);
+				if(file.endsWith(".gz"))
+					fileSort.sortFile(file,outputdir);
 			} catch (IOException e) {
 				LOGGER.error(e.getMessage());
 			}
