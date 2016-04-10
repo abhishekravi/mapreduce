@@ -151,7 +151,7 @@ public class ClientManager {
 	public static void runJob(String jobname, String mode, String bucketname, String listOfFiles, String inputToJob,
 			String outputOfJob) {
 
-		JobRunner runner = new JobRunner();
+		JobRunner runner = new JobRunner(clientconf);
 		runner.setArgs(jobname, inputToJob, outputOfJob);
 		if (mode.equals("aws"))
 			runner.prepareInput(mode, inputToJob, bucketname, listOfFiles, ClientManager.awsid, ClientManager.awskey);

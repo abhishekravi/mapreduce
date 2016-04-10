@@ -16,16 +16,16 @@ import proj.mapreduce.utils.KeyPair;
  */
 public class JobScheduler {
 
-	static Queue<Job> m_jobs;
-	static ServerConfiguration m_serverconf;
+	static Queue<Job> jobs;
+	static ServerConfiguration serverconf;
 
 	/**
 	 * constructor 
 	 * @param serverconf: server configuration  
 	 */
 	public JobScheduler(ServerConfiguration serverconf) {
-		m_jobs = new PriorityQueue<Job>();
-		m_serverconf = serverconf;
+		JobScheduler.jobs = new PriorityQueue<Job>();
+		JobScheduler.serverconf = serverconf;
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class JobScheduler {
 	 */
 	public void addJob (Job job)
 	{
-		m_jobs.add(job);
+		jobs.add(job);
 	}
 
 	/**
@@ -47,14 +47,14 @@ public class JobScheduler {
 		KeyPair<Job, ClientConfiguration> pair = null;
 		ClientConfiguration client;
 		
-		Iterator<ClientConfiguration> citr = m_serverconf.getClientConfiguration().values().iterator(); 
+		Iterator<ClientConfiguration> citr = serverconf.getClientConfiguration().values().iterator(); 
 		while (citr.hasNext())
 		{
 			client = (ClientConfiguration) citr.next();
 
 			if (!client.isActive())
 			{
-				pair = new KeyPair<Job, ClientConfiguration> (m_jobs.poll(), client);
+				pair = new KeyPair<Job, ClientConfiguration> (jobs.poll(), client);
 				client.setActive(true);
 				return pair;
 			}
@@ -84,7 +84,7 @@ public class JobScheduler {
 			Job job = new Job ();
 			job.setup(jobconf);
 			
-			m_jobs.add(job);
+			jobs.add(job);
 		}
 		
 		/* build merge job */
@@ -94,7 +94,7 @@ public class JobScheduler {
 		Job mergejob = new Job ();
 		mergejob.setup(mergjobconf);
 		
-		m_jobs.add(mergejob);
+		jobs.add(mergejob);
 		
 	}
 	

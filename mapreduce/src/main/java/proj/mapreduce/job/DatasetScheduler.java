@@ -2,41 +2,40 @@ package proj.mapreduce.job;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import proj.mapreduce.server.ServerConfiguration;
 
 /**
  * This class create a pool for datasets
+ * 
  * @author all members
  *
  */
 public class DatasetScheduler {
 
-	static ArrayList<Dataset> m_dataset;
-	static ArrayList<List<String>> m_chunks; 
-	static ServerConfiguration m_serverconf;
+	static ArrayList<Dataset> datasetList;
+	static ArrayList<List<String>> chunksList;
+	static ServerConfiguration serverconf;
 
 	/**
-	 * constructor 
+	 * constructor
+	 * 
 	 * @param serverconf
 	 */
-	public DatasetScheduler (ServerConfiguration serverconf)
-	{
-		m_dataset = new ArrayList<Dataset>();
-		m_serverconf = serverconf;
+	public DatasetScheduler(ServerConfiguration serverconf) {
+		datasetList = new ArrayList<Dataset>();
+		DatasetScheduler.serverconf = serverconf;
 	}
 
 	/**
 	 * schedule data files in a specified dataset
+	 * 
 	 * @param index
 	 */
-	public void schedule (int index)
-	{
+	public void schedule(int index) {
 		try {
-			m_chunks = m_dataset.get(index).distribute(m_serverconf.clientCount());
+			chunksList = datasetList.get(index).distribute(serverconf.clientCount());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -44,88 +43,83 @@ public class DatasetScheduler {
 
 	/**
 	 * add dataset to pool
+	 * 
 	 * @param ds
 	 */
-	public void addDataset (Dataset ds)
-	{
-		m_dataset.add(ds);
+	public void addDataset(Dataset ds) {
+		datasetList.add(ds);
 	}
 
 	/**
 	 * get the scheduled data chunks
+	 * 
 	 * @param index
 	 * @return
 	 */
-	public List<String> getChunck (int index)
-	{
-		return m_chunks.get(index);
+	public List<String> getChunck(int index) {
+		return chunksList.get(index);
 	}
 
 	/**
 	 * get the first scheduled data chunk
+	 * 
 	 * @return
 	 */
-	public List<String> getNextChunk ()
-	{
+	public List<String> getNextChunk() {
 		List<String> keys = new ArrayList<String>();
-
-		if (m_chunks.size() <= 0) return null;
-
-		keys = m_chunks.get(0);
-		m_chunks.remove(0);
+		if (chunksList.size() <= 0)
+			return null;
+		keys = chunksList.get(0);
+		chunksList.remove(0);
 
 		return keys;
 	}
 
 	/**
 	 * get dataset type
+	 * 
 	 * @return
 	 */
-	public String getType()
-	{
-		return m_dataset.get(0).type();
+	public String getType() {
+		return datasetList.get(0).getType();
 	}
 
 	/**
 	 * get bucket name
+	 * 
 	 * @return
 	 */
-	public String getBucketname()
-	{
-		return m_dataset.get(0).bucketname();
+	public String getBucketname() {
+		return datasetList.get(0).getBucketname();
 	}
-	
+
 	/**
 	 * remmove dataset from list
+	 * 
 	 * @param index
 	 */
-	public void removeDataset(int index)
-	{
-		m_dataset.remove(index);
+	public void removeDataset(int index) {
+		datasetList.remove(index);
 	}
 
 	/**
 	 * schedule for reducer
+	 * 
 	 * @return
 	 */
-	public ArrayList<List<String>> reducerSchedule()
-	{
+	public ArrayList<List<String>> reducerSchedule() {
 		ArrayList<List<String>> chunk = new ArrayList<List<String>>();
 		Dataset ds;
 		try {
-			
-			for (int i = 0; i < m_dataset.size(); i++)
-			{	
-				ds = m_dataset.get(i);
-				
-				ArrayList<List<String>> onechunk = ds.distribute(m_serverconf.reducerCount());
+			for (int i = 0; i < datasetList.size(); i++) {
+				ds = datasetList.get(i);
+				ArrayList<List<String>> onechunk = ds.distribute(serverconf.reducerCount());
 				onechunk.get(0).add(ds.getFtpConfig());
 				chunk.add(onechunk.get(0));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 		return chunk;
 
 	}

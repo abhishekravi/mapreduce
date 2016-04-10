@@ -11,16 +11,18 @@ import proj.mapreduce.server.ServerManager;
 
 /**
  * Server program main class
+ * 
  * @author root
  *
  */
 public class Server {
 	private static Logger LOGGER = LoggerFactory.getLogger(Server.class);
+
 	/**
 	 * main method to start the server.
 	 * 
 	 * @param args
-	 *            number of clients, jobname, input, output
+	 *            number of clients, jobname, mode, bucketname, folder
 	 */
 	public static void main(String[] args) {
 
@@ -41,14 +43,14 @@ public class Server {
 		}
 		LOGGER.info("args:" + args.toString());
 		int nclient = Integer.parseInt(args[0]);
-		String jobfile = args[1]; /*job.jar,input,output*/
-		String mode = args[2]; /* aws, locl or hdfs*/
-		String bucket = args[3]; /*bucketname*/
-		String folder = args[4]; 
+		String jobfile = args[1]; /* job.jar,input,output */
+		String mode = args[2]; /* aws, locl or hdfs */
+		String bucket = args[3]; /* bucketname */
+		String folder = args[4];
 
 		try {
-			m_server = new ServerManager(nclient, jobfile, mode, bucket, folder
-					,prop.getProperty("awsid"), prop.getProperty("awskey"));
+			m_server = new ServerManager(nclient, jobfile, mode, bucket, folder, prop.getProperty("awsid"),
+					prop.getProperty("awskey"));
 			m_server.start();
 		} catch (IOException e) {
 			e.printStackTrace();

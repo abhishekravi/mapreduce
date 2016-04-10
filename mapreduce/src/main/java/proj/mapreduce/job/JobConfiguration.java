@@ -7,9 +7,9 @@ package proj.mapreduce.job;
  */
 public class JobConfiguration {
 
-	String m_jarname;
-	String m_mainclass;
-	String[] m_args;
+	String jarname;
+	String mainclass;
+	String[] args;
 	
 	/**
 	 * setup job based on parameters
@@ -19,78 +19,34 @@ public class JobConfiguration {
 	 */
 	public void setup(String jname, String mclass, String[] args)
 	{
-		m_jarname = jname;
-		m_mainclass = mclass;
-		m_args = args;
+		jarname = jname;
+		mainclass = mclass;
+		this.args = args;
+	}
+
+	public String getJarname() {
+		return jarname;
+	}
+
+	public void setJarname(String jarname) {
+		this.jarname = jarname;
+	}
+
+	public String getMainclass() {
+		return mainclass;
+	}
+
+	public void setMainclass(String mainclass) {
+		this.mainclass = mainclass;
+	}
+
+	public String[] getArgs() {
+		return args;
+	}
+
+	public void setArgs(String[] args) {
+		this.args = args;
 	}
 	
-	/**
-	 * make job by reading from configuration file 
-	 * @param path
-	 */
-	public void setup(String path)
-	{
-		
-	}
 	
-	/**
-	 * set up job args
-	 * @param args
-	 */
-	public void setArgs (String[] args)
-	{
-		m_args = args;
-	}
-	
-	/**
-	 * get jobname
-	 * @return
-	 */
-	
-	public String jobName() {
-		return m_jarname;
-	}
-	
-	/**
-	 * get job main class
-	 * @return
-	 */
-	public String jobMainClass() {
-		return m_mainclass;
-	}
-	
-	/**
-	 * get job args
-	 * @return
-	 */
-	public String[] jobArgs() {
-		return m_args;
-	}
-	
-	/**
-	 * get job name
-	 * @return
-	 */
-	public String getName()
-	{
-		return m_jarname;
-	}
-	
-	/**
-	 * get input
-	 * @return
-	 */
-	public String getInput()
-	{
-		return m_args[0];
-	}
-	
-	/**
-	 * get output
-	 * @return
-	 */
-	public String getOutput()
-	{
-		return m_args[1];
-	}
 }
