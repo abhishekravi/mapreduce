@@ -9,6 +9,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/**
+ * 
+ * @author root
+ *
+ */
 public class MasterObserver implements Runnable {
 
 	Thread m_observeth;
@@ -20,12 +25,22 @@ public class MasterObserver implements Runnable {
 	static DataOutputStream m_outstream;
 	BufferedReader m_instream;
 
-
+	/**
+	 * 
+	 * @param serverip
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	MasterObserver (InetAddress serverip) throws UnknownHostException, IOException
 	{
 		m_serverip = serverip;
 	}
 
+	/**
+	 * 
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	public void start() throws UnknownHostException, IOException
 	{
 		if (m_active) return;
@@ -34,6 +49,10 @@ public class MasterObserver implements Runnable {
 		createObserveTh();		
 	}
 
+	/**
+	 * 
+	 * @throws IOException
+	 */
 	public void stop() throws IOException
 	{
 		m_active = false;
@@ -42,6 +61,11 @@ public class MasterObserver implements Runnable {
 		m_serversocket.close(); 
 	}
 
+	/**
+	 * 
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	private void setupConnection() throws UnknownHostException, IOException 
 	{
 		m_clientsocket = m_serversocket.accept(); 
@@ -49,13 +73,18 @@ public class MasterObserver implements Runnable {
 		m_instream = new BufferedReader(new InputStreamReader(m_clientsocket.getInputStream()));
 	}
 
+	/**
+	 * 
+	 */
 	private void createObserveTh() 
 	{
 		m_observeth = new Thread(this, "observation thread");
 		m_observeth.start();		
 	}
 
-
+	/**
+	 * 
+	 */
 	@Override
 	public void run() 
 	{
@@ -76,6 +105,11 @@ public class MasterObserver implements Runnable {
 
 	}
 
+	/**
+	 * 
+	 * @param reply
+	 * @throws IOException
+	 */
 	public static void updateServer(String reply) throws IOException
 	{
 		

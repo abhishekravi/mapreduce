@@ -2,9 +2,18 @@ package proj.mapreduce.client;
 
 import java.io.IOException;
 
-
+/**
+ * 
+ * @author all team
+ *
+ */
 public class CommandListener{
 
+	/**
+	 * 
+	 * @param command
+	 * @throws IOException
+	 */
 	public static void takeAction(String command) throws IOException {
 		
 		/* Check if command is from yarn */
@@ -20,6 +29,11 @@ public class CommandListener{
 		
 	}
 	
+	/**
+	 * 
+	 * @param yarncommand
+	 * @throws IOException
+	 */
 	private static void ParseYarnCommand (String yarncommand) throws IOException
 	{
 		String commandArgs[] = yarncommand.split(":");

@@ -6,6 +6,11 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+/**
+ * 
+ * @author root
+ *
+ */
 public class PingTask implements Runnable {
 	
 	Thread m_pingth;
@@ -14,7 +19,10 @@ public class PingTask implements Runnable {
 	boolean m_active = false;
 	static InetAddress m_serverip; 
 	
-	
+	/**
+	 * 
+	 * @throws SocketException
+	 */
 	public void start () throws SocketException
 	{
 		if (m_active) return; 
@@ -23,6 +31,9 @@ public class PingTask implements Runnable {
 		createListenerTh();
 	}
 	
+	/**
+	 * 
+	 */
 	public void stop ()
 	{
 		if (!m_active) return;
@@ -31,18 +42,27 @@ public class PingTask implements Runnable {
 		m_socket.close();
 	}
 	
+	/**
+	 * 
+	 * @throws SocketException
+	 */
 	private void setupConnection() throws SocketException {
 		
 		m_socket = new DatagramSocket(discoveryport);
 	}
 
+	/**
+	 * 
+	 */
 	private void createListenerTh ()
 	{
 		m_pingth = new Thread(this, "Ping runnable thread");
 	    m_pingth.start();
 	}	
 
-	
+	/**
+	 * 
+	 */
 	public void run() {
 		
 		DatagramPacket recv_packet;
@@ -78,6 +98,11 @@ public class PingTask implements Runnable {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param ack
+	 * @throws IOException
+	 */
 	public static void sendPingReply (String ack) throws IOException
 	{
 		InetAddress address = InetAddress.getByName(ack.split(",")[0]);
@@ -92,6 +117,10 @@ public class PingTask implements Runnable {
 		m_serverip = address;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public InetAddress serverAddress()
 	{
 		return m_serverip;

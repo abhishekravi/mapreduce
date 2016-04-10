@@ -103,4 +103,9 @@ public class Dataset {
 	{
 		return m_bucketname;
 	}
+	
+	public String getFtpConfig ()
+	{
+		return (m_ip + "," + m_port + "," + m_user + "," + m_password + "," + m_intermediatefiles); 
+	}
 }
