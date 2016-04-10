@@ -90,7 +90,7 @@ public class CommandListener{
 			ClientManager.runJob(jobname, mode, bucketName, listOfFiles, inputToJob, outputOfJob);
 			break;
 		case "doreducer":
-			ClientManager.doShuffle (yarncommand.replace(Command.YARN_DO_REDUCER.toString(), 
+			ClientManager.doShuffle (yarncommand.replace(":" + command + ":", 
 					""));
 			ClientManager.doMerge();
 			break;

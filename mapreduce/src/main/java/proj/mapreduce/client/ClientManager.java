@@ -200,7 +200,7 @@ public class ClientManager {
 				{
 					try {
 						getfromClient (ftpipaddress, ftpport, ftpusername,
-								ftppass, filelist[i], shufflefolder + filelist[i]);
+								ftppass, filelist[i], shufflefolder + "/" + filelist[i]);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
