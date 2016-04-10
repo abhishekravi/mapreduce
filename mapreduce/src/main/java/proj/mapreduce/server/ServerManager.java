@@ -196,6 +196,7 @@ public class ServerManager {
 	public static void shuffle()
 	{
 		Collection <ClientConfiguration> clientaddr = m_serverconf.getClientConfiguration().values();
+		ArrayList<List<String>> chunks;
 		
 		/* get all clients */
 		for (ClientConfiguration conf : clientaddr)
@@ -204,8 +205,15 @@ public class ServerManager {
 				return;
 		}
 		
-		/* */
-		m_dsheduler.reducerSchedule();
+		/* schedule dataset */
+		chunks = m_dsheduler.reducerSchedule();
+		
+		createReducerCommand(chunks);
+		
+	}
+	
+	private void createReducerCommand(ArrayList<List<String>> chunks)
+	{
 		
 	}
 }
