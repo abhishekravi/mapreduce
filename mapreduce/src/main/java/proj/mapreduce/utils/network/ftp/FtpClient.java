@@ -20,16 +20,16 @@ import org.apache.commons.net.ftp.FTPClient;
 
 public class FtpClient {
 
-	FTPClient m_ftpClient;
+	FTPClient ftpClient;
 	
 	public FtpClient (String server, int port, String user, String password) throws SocketException, IOException
 	{
-		m_ftpClient = new FTPClient();
+		ftpClient = new FTPClient();
 		
-		m_ftpClient.connect(server, port);
-		m_ftpClient.login(user, password);
-		m_ftpClient.enterLocalPassiveMode();
-		m_ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+		ftpClient.connect(server, port);
+		ftpClient.login(user, password);
+		ftpClient.enterLocalPassiveMode();
+		ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 
 	}
 	
@@ -38,7 +38,7 @@ public class FtpClient {
 		boolean result = false;
 
 		OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(localfile));
-		result = m_ftpClient.retrieveFile(severfile, outputStream);
+		result = ftpClient.retrieveFile(severfile, outputStream);
 		
 		outputStream.close();
 		
@@ -50,7 +50,7 @@ public class FtpClient {
 		int bytesRead = -1;
 		boolean result = false;
 		byte[] bytesArray = new byte[4096];
-		InputStream inputStream = m_ftpClient.retrieveFileStream(serverfile);
+		InputStream inputStream = ftpClient.retrieveFileStream(serverfile);
 		
 		File dwFile = new File(localfile);
 		OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(dwFile));
@@ -59,7 +59,7 @@ public class FtpClient {
 			outputStream.write(bytesArray, 0, bytesRead);
 		}
 
-		result = m_ftpClient.completePendingCommand();
+		result = ftpClient.completePendingCommand();
 		
 		outputStream.close();
 		inputStream.close();
@@ -69,10 +69,10 @@ public class FtpClient {
 
 	public void stop () throws IOException
 	{
-		if (m_ftpClient.isConnected()) 
+		if (ftpClient.isConnected()) 
 		{
-			m_ftpClient.logout();
-			m_ftpClient.disconnect();
+			ftpClient.logout();
+			ftpClient.disconnect();
 		}
 	}
 }

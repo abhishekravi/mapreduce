@@ -5,14 +5,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import proj.mapreduce.client.ClientConfiguration;
 import proj.mapreduce.server.Listener;
 import proj.mapreduce.server.ServerConfiguration;
-import proj.mapreduce.server.ServerManager;
 
 /**
  * Class to discover networks in the same subnet.
@@ -22,36 +19,32 @@ import proj.mapreduce.server.ServerManager;
  */
 public class NetworkDiscovery {
 
-	private static Timer 	m_disctimer;
-	private static HashMap<InetAddress, Boolean> 	m_neighbors; 
+	private static Timer disctimer;
+	private static HashMap<InetAddress, Boolean> neighbors;
 	private static int discoveryport = 54321;
-	private static boolean m_active = false;
-	private static DatagramSocket 	m_bcsocket;
-	private static ServerConfiguration m_serverconf;
+	private static boolean active = false;
+	private static DatagramSocket bcsocket;
+	private static ServerConfiguration serverconf;
 
 	public NetworkDiscovery(ServerConfiguration serverconf) {
-		m_serverconf = serverconf;
+		NetworkDiscovery.serverconf = serverconf;
 	}
 
-	public void discover()
-	{
-		m_disctimer = new Timer();
-		m_bcsocket = createDatagramConnection ();
+	public void discover() {
+		disctimer = new Timer();
+		bcsocket = createDatagramConnection();
 
-		sendDiscoveryPacket ();
-		listen ();
-		
-		
+		sendDiscoveryPacket();
+		listen();
+
 	}
 
-	public HashMap<InetAddress, Boolean> discover(String inet)
-	{
+	public HashMap<InetAddress, Boolean> discover(String inet) {
 
 		return null;
 	}
 
-	private DatagramSocket createDatagramConnection () 
-	{
+	private DatagramSocket createDatagramConnection() {
 		DatagramSocket bcsocket = null;
 		try {
 			bcsocket = new DatagramSocket();
@@ -63,55 +56,49 @@ public class NetworkDiscovery {
 		return bcsocket;
 	}
 
-	private void sendDiscoveryPacket()
-	{
-		byte [] buf = Command.YARN_DETECT.toString().getBytes();
+	private void sendDiscoveryPacket() {
+		byte[] buf = Command.YARN_DETECT.toString().getBytes();
 
-		
-		
-		//while (m_active)
+		// while (m_active)
 		{
 			try {
 
-				DatagramPacket discovermsg = new DatagramPacket(buf, buf.length, 
-						m_serverconf.ip_address, discoveryport);
-				m_bcsocket.send(discovermsg);
+				DatagramPacket discovermsg = new DatagramPacket(buf, buf.length, serverconf.ipaddress, discoveryport);
+				bcsocket.send(discovermsg);
 
-				m_disctimer.schedule(new TimerTask() {
+				disctimer.schedule(new TimerTask() {
 					@Override
 					public void run() {
 
 					}
-				}, m_serverconf.discoveyTimeout());
+				}, serverconf.discoveyTimeout());
 
 			} catch (IOException e) {
 				e.printStackTrace();
-			}			
+			}
 		}
 	}
 
-	private void listen ()
-	{		
-		Runnable listener = new Runnable () {			
+	private void listen() {
+		Runnable listener = new Runnable() {
 			@Override
 			public void run() {
 
 				try {
 
-					//DatagramSocket socket = new DatagramSocket();
+					// DatagramSocket socket = new DatagramSocket();
 
-					byte[] buf = new byte [256];
+					byte[] buf = new byte[256];
 					DatagramPacket replypacket = new DatagramPacket(buf, buf.length);
 					String replymsg;
 
-					m_active = true;
+					active = true;
 
-					while (m_active)
-					{
-						m_bcsocket.receive(replypacket);
-						
+					while (active) {
+						bcsocket.receive(replypacket);
+
 						replymsg = new String(replypacket.getData(), 0, replypacket.getLength());
-						
+
 						replymsg += ":" + replypacket.getAddress().toString().replaceFirst("/", "");
 
 						Listener.takeAction(replymsg);
@@ -126,18 +113,16 @@ public class NetworkDiscovery {
 		Thread listenerth = new Thread(null, listener, "Startup Thread");
 		listenerth.start();
 
-		/*try {
-			//listenerth.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}*/
+		/*
+		 * try { //listenerth.join(); } catch (InterruptedException e) {
+		 * e.printStackTrace(); }
+		 */
 
 	}
 
-	public static void stop ()
-	{
-		m_active = false;
-		m_bcsocket.close();
-		m_disctimer.cancel();
+	public static void stop() {
+		active = false;
+		bcsocket.close();
+		disctimer.cancel();
 	}
 }

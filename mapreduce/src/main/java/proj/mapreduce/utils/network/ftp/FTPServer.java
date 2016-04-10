@@ -25,17 +25,16 @@ import proj.mapreduce.client.ClientConfiguration;
 public class FTPServer {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(FTPServer.class);
-	UserManager m_usermanager;
-	FtpServer m_ftpserver;
-	ClientConfiguration m_clientconf;
-	
-	public FTPServer(ClientConfiguration clientconf)
-	{
-		m_clientconf = clientconf;
-		m_usermanager = null;
-		m_ftpserver = null;		
+	UserManager usermanager;
+	FtpServer ftpserver;
+	ClientConfiguration clientconf;
+
+	public FTPServer(ClientConfiguration clientconf) {
+		this.clientconf = clientconf;
+		usermanager = null;
+		ftpserver = null;
 	}
-	
+
 	public void createFtpServer() {
 		Map<String, Ftplet> ftplet;
 		FtpServerFactory serverFactory;
@@ -47,17 +46,17 @@ public class FTPServer {
 		serverFactory = new FtpServerFactory();
 		serverFactory.addListener("default", factory.createListener());
 
-		if (m_usermanager == null) {
+		if (usermanager == null) {
 			createUserManager();
-			addUser(m_clientconf.getFtpuser(), m_clientconf.getFtppass(), m_clientconf.getFtppath());
+			addUser(clientconf.getFtpuser(), clientconf.getFtppass(), clientconf.getFtppath());
 		}
-		serverFactory.setUserManager(m_usermanager);
+		serverFactory.setUserManager(usermanager);
 
 		ftplet = new HashMap<String, Ftplet>();
 		ftplet.put("miaFtplet", new CostumFtplet());
 		serverFactory.setFtplets(ftplet);
 
-		m_ftpserver = serverFactory.createServer();
+		ftpserver = serverFactory.createServer();
 	}
 
 	public void createUserManager() {
@@ -68,11 +67,11 @@ public class FTPServer {
 			File propFile = new File(FTPServer.class.getClassLoader().getResource("users.properties").toURI());
 			userManagerFactory.setFile(propFile);
 		} catch (URISyntaxException e) {
-			LOGGER.error("error loading user.properties::exception-" + e.getMessage()); 
+			LOGGER.error("error loading user.properties::exception-" + e.getMessage());
 		}
 		userManagerFactory.setPasswordEncryptor(new CostumPasswordEncryptor());
 
-		m_usermanager = userManagerFactory.createUserManager();
+		usermanager = userManagerFactory.createUserManager();
 	}
 
 	public void createUserManager(String path) {
@@ -82,7 +81,7 @@ public class FTPServer {
 		userManagerFactory.setFile(new File(path));
 		userManagerFactory.setPasswordEncryptor(new CostumPasswordEncryptor());
 
-		m_usermanager = userManagerFactory.createUserManager();
+		usermanager = userManagerFactory.createUserManager();
 	}
 
 	public void addUser(String username, String password, String homedir) {
@@ -97,7 +96,7 @@ public class FTPServer {
 		user.setAuthorities(authorities);
 
 		try {
-			m_usermanager.save(user);
+			usermanager.save(user);
 		} catch (FtpException e1) {
 			;
 		}
@@ -106,7 +105,7 @@ public class FTPServer {
 
 	public void start() {
 		try {
-			m_ftpserver.start();
+			ftpserver.start();
 		} catch (FtpException ex) {
 			;
 		}

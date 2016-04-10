@@ -13,11 +13,11 @@ import java.net.Socket;
  */
 public class ClientObserver implements Runnable {
 
-	private Socket m_clientsocket;
-	Thread m_obsrvth; 
-	static DataOutputStream m_outstream;
-	BufferedReader m_instream;
-	boolean m_active =false;
+	private Socket clientsocket;
+	Thread obsrvth; 
+	static DataOutputStream outstream;
+	BufferedReader instream;
+	boolean active =false;
 	
 	/**
 	 * constructor based on parameters
@@ -27,12 +27,12 @@ public class ClientObserver implements Runnable {
 	 */
 	public ClientObserver(ThreadGroup threadgrp, String clientaddr, int obsrvport) {
 		
-		m_obsrvth = new Thread(this, "Client Observer");
+		obsrvth = new Thread(this, "Client Observer");
 		
 		try {
-			m_clientsocket = new Socket(clientaddr, obsrvport);
-			m_outstream = new DataOutputStream(m_clientsocket.getOutputStream());
-			m_instream = new BufferedReader(new InputStreamReader(m_clientsocket.getInputStream()));
+			clientsocket = new Socket(clientaddr, obsrvport);
+			outstream = new DataOutputStream(clientsocket.getOutputStream());
+			instream = new BufferedReader(new InputStreamReader(clientsocket.getInputStream()));
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -44,8 +44,8 @@ public class ClientObserver implements Runnable {
 	 */
 	public void start()
 	{
-		if (m_active) return; 		
-		m_obsrvth.start();
+		if (active) return; 		
+		obsrvth.start();
 	}
 
 	/*
@@ -53,11 +53,11 @@ public class ClientObserver implements Runnable {
 	 */
 	public void stop() throws IOException
 	{
-		m_active = false;
+		active = false;
 		
-		m_outstream.close();
-		m_instream.close();
-		m_clientsocket.close();
+		outstream.close();
+		instream.close();
+		clientsocket.close();
 		
 	}
 	
@@ -66,14 +66,14 @@ public class ClientObserver implements Runnable {
 	 */
 	@Override
 	public void run() {
-		m_active = true;
+		active = true;
 	
 		String reply;
 		
 		
-		while(m_active){
+		while(active){
 			try{		
-				reply = m_instream.readLine();
+				reply = instream.readLine();
 				
 				if (reply != null)
 				{
@@ -92,7 +92,7 @@ public class ClientObserver implements Runnable {
 
 	public void sendCommand(String command) throws IOException
 	{
-		m_outstream.writeBytes(command);
+		outstream.writeBytes(command);
 	}
 
 }

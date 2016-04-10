@@ -6,10 +6,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -24,7 +21,6 @@ import proj.mapreduce.job.JobScheduler;
 import proj.mapreduce.utils.KeyPair;
 import proj.mapreduce.utils.network.Command;
 import proj.mapreduce.utils.network.NetworkDiscovery;
-import proj.mapreduce.utils.network.PingTask;
 
 /**
  * 
@@ -34,16 +30,16 @@ import proj.mapreduce.utils.network.PingTask;
 public class ServerManager {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(ServerManager.class);
-	boolean m_active = false;
+	boolean active = false;
 
-	static TimerTask m_ping_timer_task;
-	static Timer m_ping_timer;
+	static TimerTask pingTimerTask;
+	static Timer pingTimer;
 
-	static private ServerConfiguration m_serverconf;
-	static private ThreadGroup 		m_clientobsthgrp;
-	static private JobScheduler m_jscheduler;
-	static private DatasetScheduler m_dsheduler;
-	
+	static private ServerConfiguration serverconf;
+	static private ThreadGroup clientobsthgrp;
+	static private JobScheduler jscheduler;
+	static private DatasetScheduler dsheduler;
+
 	/**
 	 * 
 	 * @param nclient
@@ -55,39 +51,36 @@ public class ServerManager {
 	 * @param awskey
 	 * @throws IOException
 	 */
-	public ServerManager(int nclient, String job, String mode, String bucketname, 
-			String folder, String awsid, String awskey) throws IOException
-	{
-		m_serverconf = new ServerConfiguration(nclient);
-		String [] jobargs = job.split(",");
-		
+	public ServerManager(int nclient, String job, String mode, String bucketname, String folder, String awsid,
+			String awskey) throws IOException {
+		serverconf = new ServerConfiguration(nclient);
+		String[] jobargs = job.split(",");
+
 		buildScheduler();
 		buildJobPool(jobargs[0], jobargs[1], jobargs[2]);
 		buidDatasetScheduler(mode, bucketname, folder, awsid, awskey);
-	
-		m_clientobsthgrp = new ThreadGroup("Client Observers");
-		
+
+		clientobsthgrp = new ThreadGroup("Client Observers");
+
 	}
 
 	/**
 	 * 
 	 */
-	private void buildScheduler ()
-	{
-		m_jscheduler = new JobScheduler(m_serverconf);
+	private void buildScheduler() {
+		jscheduler = new JobScheduler(serverconf);
 	}
-	
+
 	/**
 	 * 
 	 * @param jobs
 	 * @param input
 	 * @param output
 	 */
-	public static void buildJobPool (String jobs, String input, String output)
-	{
-		m_jscheduler.buid (jobs, input, output, m_serverconf.clientCount());
+	public static void buildJobPool(String jobs, String input, String output) {
+		jscheduler.buid(jobs, input, output, serverconf.clientCount());
 	}
-	
+
 	/**
 	 * 
 	 * @param mode
@@ -96,30 +89,27 @@ public class ServerManager {
 	 * @param awsid
 	 * @param awskey
 	 */
-	public static void buidDatasetScheduler (String mode, String bucketname, String folder, String awsid, String awskey)
-	{
-		m_dsheduler = new DatasetScheduler(m_serverconf);
-		
-		Dataset dataset = new Dataset(mode, bucketname, folder, awsid, awskey);
-		m_dsheduler.addDataset(dataset);
-	}
+	public static void buidDatasetScheduler(String mode, String bucketname, String folder, String awsid,
+			String awskey) {
+		dsheduler = new DatasetScheduler(serverconf);
 
+		Dataset dataset = new Dataset(mode, bucketname, folder, awsid, awskey);
+		dsheduler.addDataset(dataset);
+	}
 
 	/**
 	 * 
 	 * @throws SocketException
 	 */
-	public void start () throws SocketException
-	{
-		NetworkDiscovery netdisk = new NetworkDiscovery(m_serverconf);
+	public void start() throws SocketException {
+		NetworkDiscovery netdisk = new NetworkDiscovery(serverconf);
 		netdisk.discover();
 	}
 
 	/**
 	 * 
 	 */
-	public void stop ()
-	{
+	public void stop() {
 		stopFailureDetection();
 	}
 
@@ -127,21 +117,20 @@ public class ServerManager {
 	 * 
 	 * @throws SocketException
 	 */
-	public static void startFailureDetection() throws SocketException
-	{
-		if (m_serverconf.clientCount() == 0)
-		{
-			//m_ping_timer_task = new PingTask(m_serverconf.neighbors(), m_serverconf.pingTimeout());
-			//m_ping_timer.scheduleAtFixedRate(m_ping_timer_task, 0, m_serverconf.pingFrequency());
+	public static void startFailureDetection() throws SocketException {
+		if (serverconf.clientCount() == 0) {
+			// m_ping_timer_task = new PingTask(m_serverconf.neighbors(),
+			// m_serverconf.pingTimeout());
+			// m_ping_timer.scheduleAtFixedRate(m_ping_timer_task, 0,
+			// m_serverconf.pingFrequency());
 		}
 	}
 
 	/**
 	 * 
 	 */
-	public void stopFailureDetection()
-	{
-		m_ping_timer.cancel();
+	public void stopFailureDetection() {
+		pingTimer.cancel();
 	}
 
 	/**
@@ -149,21 +138,22 @@ public class ServerManager {
 	 * @return
 	 */
 	public boolean busy() {
-		return m_active;
+		return active;
 	}
 
 	/**
-	 * create a thread which is a tcpclient thread to send data to a specific tcpserver which is one our clients 
+	 * create a thread which is a tcpclient thread to send data to a specific
+	 * tcpserver which is one our clients
+	 * 
 	 * @param address
 	 */
 	public static void startObserver(String address, int port) {
-				
+
 		LOGGER.info("address:" + address);
-		
-		ClientObserver clientobs = new ClientObserver (m_clientobsthgrp, address, port);
-		
-		if (m_serverconf.addObserver(address, clientobs))
-		{
+
+		ClientObserver clientobs = new ClientObserver(clientobsthgrp, address, port);
+
+		if (serverconf.addObserver(address, clientobs)) {
 			clientobs.start();
 		}
 	}
@@ -172,8 +162,7 @@ public class ServerManager {
 	 * 
 	 * @param address
 	 */
-	public static void stopObserver(String address) 
-	{
+	public static void stopObserver(String address) {
 
 	}
 
@@ -183,17 +172,14 @@ public class ServerManager {
 	 * @param obsrvport
 	 * @return
 	 */
-	public static boolean updateNeighbors (String address, int obsrvport)
-	{
-		if (!m_serverconf.updateClient(address))
-		{
+	public static boolean updateNeighbors(String address, int obsrvport) {
+		if (!serverconf.updateClient(address)) {
 			return false;
 		}
-		
-		ServerManager.startObserver (address, obsrvport);	
-		
-		if (m_serverconf.activeNeighbors() >= m_serverconf.clientCount())
-		{
+
+		ServerManager.startObserver(address, obsrvport);
+
+		if (serverconf.activeNeighbors() >= serverconf.clientCount()) {
 			ServerManager.startScheduling();
 			NetworkDiscovery.stop();
 		}
@@ -201,40 +187,36 @@ public class ServerManager {
 		return true;
 	}
 
-	
 	/**
 	 * 
 	 */
-	public static void startScheduling ()
-	{
-	
-		m_dsheduler.schedule(0);
-		
-		for (int i = 0; i < m_serverconf.clientCount(); i++)
-		{
-			
-			KeyPair<Job, ClientConfiguration> pair = m_jscheduler.scheduleNextJob();
-	
-			if (m_serverconf.observedClient(pair.getRight().getAddress()).toString() != "")
-			{
+	public static void startScheduling() {
+
+		dsheduler.schedule(0);
+
+		for (int i = 0; i < serverconf.clientCount(); i++) {
+
+			KeyPair<Job, ClientConfiguration> pair = jscheduler.scheduleNextJob();
+
+			if (serverconf.observedClient(pair.getRight().getAddress()).toString() != "") {
 				/* create job command */
 				Job job = pair.getLeft();
-				job.addDataset(m_dsheduler.getType(), m_dsheduler.getBucketname(), m_dsheduler.getNextChunk());
-				
-				String command = Command.YARN_RUN_JOB.toString(); 
+				job.addDataset(dsheduler.getType(), dsheduler.getBucketname(), dsheduler.getNextChunk());
+
+				String command = Command.YARN_RUN_JOB.toString();
 				command = command + job.toString() + "\n";
-				
+
 				try {
-					m_serverconf.observedClient(pair.getRight().getAddress()).sendCommand(command);
+					serverconf.observedClient(pair.getRight().getAddress()).sendCommand(command);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		
-		m_dsheduler.removeDataset(0);
+
+		dsheduler.removeDataset(0);
 	}
-	
+
 	/**
 	 * 
 	 * @param ip
@@ -243,77 +225,71 @@ public class ServerManager {
 	 * @param pass
 	 * @param intermediatefiles
 	 */
-	public static void mapperComplete (String ip, int port, String user, String pass, String intermediatefiles)
-	{
+	public static void mapperComplete(String ip, int port, String user, String pass, String intermediatefiles) {
 		/* make the clientconf to inactive */
 		try {
-			if (m_serverconf.getClientConfiguration().keySet().contains(InetAddress.getByName(ip)))
-			{
-				m_serverconf.getClientConfiguration().get(InetAddress.getByName(ip)).setActive(false);;
+			if (serverconf.getClientConfiguration().keySet().contains(InetAddress.getByName(ip))) {
+				serverconf.getClientConfiguration().get(InetAddress.getByName(ip)).setActive(false);
+				;
 			}
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		
+
 		/* create dataset from type hdfs */
 		Dataset dataset = new Dataset(ip, port, user, pass, intermediatefiles);
-		m_dsheduler.addDataset(dataset);
+		dsheduler.addDataset(dataset);
 	}
-	
+
 	/**
 	 * 
 	 */
-	public static void shuffle()
-	{
-		Collection <ClientConfiguration> clientaddr = m_serverconf.getClientConfiguration().values();
+	public static void shuffle() {
+		Collection<ClientConfiguration> clientaddr = serverconf.getClientConfiguration().values();
 		ArrayList<List<String>> chunks;
-		
+
 		/* get all clients */
-		for (ClientConfiguration conf : clientaddr)
-		{
+		for (ClientConfiguration conf : clientaddr) {
 			if (conf.isActive())
 				return;
 		}
-		
+
 		/* schedule dataset */
-		chunks = m_dsheduler.reducerSchedule();
-		
+		chunks = dsheduler.reducerSchedule();
+
 		createReducerCommand(chunks);
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @param allchunks
 	 */
-	private static void createReducerCommand(ArrayList<List<String>> allchunks)
-	{
+	private static void createReducerCommand(ArrayList<List<String>> allchunks) {
 		/* loop over chunks */
 		String chunkstring = "";
 		String command = "";
-		
-		for (List<String> liststr : allchunks)
-		{
-			chunkstring += liststr.remove(liststr.size()-1);
-			for (String str : liststr)
-			{
+
+		for (List<String> liststr : allchunks) {
+			chunkstring += liststr.remove(liststr.size() - 1);
+			for (String str : liststr) {
 				chunkstring += str;
 				chunkstring += ",";
 			}
-			
+
 			/* remove * from last */
-			chunkstring.substring(0, chunkstring.length() -1);
-			chunkstring +=":";
+			chunkstring.substring(0, chunkstring.length() - 1);
+			chunkstring += ":";
 		}
-		
-		chunkstring.substring(0, chunkstring.length() -1);
-		
-		 command = Command.YARN_DO_REDUCER.toString() +  ":" + chunkstring;
-		 
-		 InetAddress ips = m_serverconf.getClientConfiguration().keySet().iterator().next();
-		 
-		 try {
-			m_serverconf.observedClient(ips).sendCommand(command);
+
+		chunkstring.substring(0, chunkstring.length() - 1);
+
+		command = Command.YARN_DO_REDUCER.toString() + ":" + chunkstring;
+
+		InetAddress ips = serverconf.getClientConfiguration().keySet().iterator().next();
+
+		try {
+			serverconf.observedClient(ips).sendCommand(command);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
