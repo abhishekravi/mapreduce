@@ -1,6 +1,7 @@
 package proj.mapreduce.utils.network.ftp;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,11 +17,14 @@ import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import proj.mapreduce.client.ClientConfiguration;
 
 public class FTPServer {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(FTPServer.class);
 	UserManager m_usermanager;
 	FtpServer m_ftpserver;
 	ClientConfiguration m_clientconf;
@@ -60,8 +64,12 @@ public class FTPServer {
 		PropertiesUserManagerFactory userManagerFactory;
 
 		userManagerFactory = new PropertiesUserManagerFactory();
-		userManagerFactory.setFile(new File(System.getProperty("user.dir")
-				+ "/" + "users.properties"));
+		try {
+			File propFile = new File(FTPServer.class.getClassLoader().getResource("users.properties").toURI());
+			userManagerFactory.setFile(propFile);
+		} catch (URISyntaxException e) {
+			LOGGER.error("error loading user.properties::exception-" + e.getMessage());
+		}
 		userManagerFactory.setPasswordEncryptor(new CostumPasswordEncryptor());
 
 		m_usermanager = userManagerFactory.createUserManager();
