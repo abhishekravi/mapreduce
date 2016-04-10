@@ -50,8 +50,8 @@ public class S3Helper {
 	 * method to download file from s3.
 	 * 
 	 * @param filename
+	 * @param bucket
 	 * @param output
-	 * @param file
 	 *            file name to download
 	 * @param fs
 	 */
