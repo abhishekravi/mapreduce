@@ -10,94 +10,93 @@ import proj.mapreduce.utils.network.ftp.FTPServer;
 import proj.mapreduce.utils.network.ftp.FtpClient;
 
 /**
+ * Client manager class.
  * 
  * @author root
  *
  */
 public class ClientManager {
 
-	static boolean m_busy = false;
-	static MasterObserver m_observer = null;
-	static PingTask m_pingtask = null;
-	static FTPServer m_ftpserver = null;
-	static FtpClient m_ftpclient = null;
+	static boolean busy = false;
+	static MasterObserver observer = null;
+	static PingTask pingtask = null;
+	static FTPServer ftpserver = null;
+	static FtpClient ftpclient = null;
 	static String awsid;
 	static String awskey;
-	static ClientConfiguration m_clientconf;
+	static ClientConfiguration clientconf;
 
 	/**
-	 * 
+	 * ClientManager constructor.
 	 * @param awsid
 	 * @param awskey
 	 */
-	public ClientManager(String awsid, String awskey){
+	public ClientManager(String awsid, String awskey) {
 		ClientManager.awsid = awsid;
 		ClientManager.awskey = awskey;
-		
-		m_clientconf = new ClientConfiguration();
-		m_clientconf.setIpaddressbyName(NetworkUtils.getIpAddress().getHostName());
-		m_clientconf.setupFtpConfiguration("geust", "", "/home/ftp");
+
+		clientconf = new ClientConfiguration();
+		clientconf.setIpaddressbyName(NetworkUtils.getIpAddress().getHostName());
+		clientconf.setupFtpConfiguration("geust", "", "/home/ftp");
 	}
-	
+
 	/**
-	 * 
+	 * ClientManager constructor.
 	 * @param awsid
 	 * @param awskey
 	 * @param ftpuser
 	 * @param ftppass
 	 * @param ftppath
 	 */
-	public ClientManager(String awsid, String awskey, String ftpuser, String ftppass, String ftppath)
-	{
+	public ClientManager(String awsid, String awskey, String ftpuser, String ftppass, String ftppath) {
 		ClientManager.awsid = awsid;
 		ClientManager.awskey = awskey;
-		
-		m_clientconf = new ClientConfiguration();
-		m_clientconf.setupFtpConfiguration(ftpuser, ftppass, ftppath);
-		
+
+		clientconf = new ClientConfiguration();
+		clientconf.setupFtpConfiguration(ftpuser, ftppass, ftppath);
+
 	}
 
-	
 	/**
-	 * Run a thread to listen for received command in client/server tcp mode
+	 * Run a thread to listen for received command in client/server tcp mode.
 	 */
 	public static void startObserver() {
-		if (m_pingtask == null)
+		if (pingtask == null)
 			return;
 
 		try {
-			m_observer = new MasterObserver(m_pingtask.serverAddress());
-			m_observer.start();
-			
+			observer = new MasterObserver(pingtask.serverAddress());
+			observer.start();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * 
+	 * start pinging.
 	 * @throws SocketException
 	 */
 	public void startPinging() throws SocketException {
 
-		m_pingtask = new PingTask();
-		m_pingtask.start();
-		m_busy = true;
+		pingtask = new PingTask();
+		pingtask.start();
+		busy = true;
 	}
 
 	/**
-	 * 
+	 * start the FTP server.
 	 */
 	public void startFtpServer() {
 
-		m_ftpserver = new FTPServer(m_clientconf);
-		m_ftpserver.createFtpServer();
-		m_ftpserver.start();
+		ftpserver = new FTPServer(clientconf);
+		ftpserver.createFtpServer();
+		ftpserver.start();
 
 	}
 
 	/**
-	 * 
+	 * get files from client.
 	 * @param server
 	 * @param port
 	 * @param user
@@ -107,17 +106,16 @@ public class ClientManager {
 	 * @throws SocketException
 	 * @throws IOException
 	 */
-	public static void getfromClient(String server, int port, String user,
-			String password, String serverfile, String localfile)
-			throws SocketException, IOException {
+	public static void getfromClient(String server, int port, String user, String password, String serverfile,
+			String localfile) throws SocketException, IOException {
 
-		m_ftpclient = new FtpClient(server, port, user, password);
-		m_ftpclient.downloadFileBlocking(serverfile, localfile);
-		m_ftpclient.stop();
+		ftpclient = new FtpClient(server, port, user, password);
+		ftpclient.downloadFileBlocking(serverfile, localfile);
+		ftpclient.stop();
 	}
-	
+
 	/**
-	 * 
+	 * method to get files from hdfs.
 	 * @param type
 	 * @param bucketname
 	 * @param key
@@ -129,7 +127,7 @@ public class ClientManager {
 		case "aws":
 
 			S3Helper reader = new S3Helper(ClientManager.awsid, ClientManager.awskey);
-			reader.readFromS3(bucketname, key ,"");
+			reader.readFromS3(bucketname, key, "");
 
 			break;
 		default:
@@ -139,7 +137,7 @@ public class ClientManager {
 	}
 
 	/**
-	 * 
+	 * run the job using job runner.
 	 * @param jobname
 	 * @param mode
 	 * @param bucketname
@@ -155,7 +153,7 @@ public class ClientManager {
 		if (mode.equals("aws"))
 			runner.prepareInput(mode, inputToJob, bucketname, listOfFiles, ClientManager.awsid, ClientManager.awskey);
 		else
-			runner.prepareInput(mode,"", "", "", "", "");
+			runner.prepareInput(mode, "", "", "", "", "");
 
 		try {
 			runner.runJob(jobname);
@@ -170,6 +168,6 @@ public class ClientManager {
 	 * @return
 	 */
 	public boolean busy() {
-		return m_busy;
+		return busy;
 	}
 }
