@@ -211,7 +211,6 @@ public class ServerManager {
 		try {
 			if (serverconf.getClientConfiguration().keySet().contains(InetAddress.getByName(ip))) {
 				serverconf.getClientConfiguration().get(InetAddress.getByName(ip)).setActive(false);
-				;
 			}
 		} catch (UnknownHostException e) {
 			LOGGER.error(e.getMessage());
@@ -256,7 +255,7 @@ public class ServerManager {
 			chunkstring += ":";
 		}
 		chunkstring.substring(0, chunkstring.length() - 1);
-		command = Command.YARN_DO_REDUCER.toString() + ":" + chunkstring;
+		command = Command.YARN_DO_REDUCER.toString() + ":" + chunkstring + "\n";
 		InetAddress ips = serverconf.getClientConfiguration().keySet().iterator().next();
 		try {
 			serverconf.observedClient(ips).sendCommand(command);

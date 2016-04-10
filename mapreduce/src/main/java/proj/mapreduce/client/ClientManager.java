@@ -58,6 +58,7 @@ public class ClientManager {
 		ClientManager.awskey = awskey;
 
 		clientconf = new ClientConfiguration();
+		clientconf.setIpaddressbyName(NetworkUtils.getIpAddress().getHostName());
 		clientconf.setupFtpConfiguration(ftpuser, ftppass, ftppath);
 
 	}

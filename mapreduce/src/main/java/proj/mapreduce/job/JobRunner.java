@@ -130,7 +130,7 @@ public class JobRunner {
 		File outdir = new File(out);
 		File[] files = outdir.listFiles();
 		String command = Command.YARN_COMPLETE_JOB.toString() + ":";
-		command = command + clientConf.getAddress() + ":";
+		command = command + clientConf.getAddress().toString().replace("/", "") + ":";
 		command = command + ClientConfiguration.ftpport + ":";
 		command = command + clientConf.getFtpuser() + ":";
 		command = command + clientConf.getFtppass() + ":";
@@ -139,7 +139,7 @@ public class JobRunner {
 				command = command + files[i].getName().replace(clientConf.getFtppath() + "/", "") + ",";
 			}
 		}
-		command = command.substring(0, command.lastIndexOf(","));
+		command = command.substring(0, command.lastIndexOf(",")) + "\n";
 		return command;
 	}
 }
