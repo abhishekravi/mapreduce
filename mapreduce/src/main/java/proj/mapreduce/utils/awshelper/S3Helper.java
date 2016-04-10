@@ -53,17 +53,17 @@ public class S3Helper {
 	 *            file name to download
 	 * @param fs
 	 */
-	private InputStream download(String filename, String bucket, String output) {
+	private void download(String filename, String bucket, String output) {
 		S3Object s3object = s3.getObject(new GetObjectRequest(bucket, filename));
 		InputStream input = s3object.getObjectContent();
 		try {
 			String key = s3object.getKey();
 			key = key.substring(key.lastIndexOf("/") + 1, key.length());
 			Files.copy(input, Paths.get(output + "/" + key));
+			input.close();
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 		}
-		return input;
 	}
 
 	/**

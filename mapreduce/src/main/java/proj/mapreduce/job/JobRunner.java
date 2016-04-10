@@ -114,7 +114,7 @@ public class JobRunner {
 				LOGGER.info(line);
 			}
 			proc.waitFor();
-			MasterObserver.updateServer(makeReply2Server(args.split(",")[1]));
+			MasterObserver.updateServer(makeReply2Server(args.split(",")[2]));
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 		}
@@ -129,7 +129,7 @@ public class JobRunner {
 	private String makeReply2Server(String out) {
 		File outdir = new File(out);
 		File[] files = outdir.listFiles();
-		String command = Command.YARN_COMPLETE_JOB.toString();
+		String command = Command.YARN_COMPLETE_JOB.toString() + ":";
 		command = command + clientConf.getAddress() + ":";
 		command = command + ClientConfiguration.ftpport + ":";
 		command = command + clientConf.getFtpuser() + ":";
