@@ -4,6 +4,9 @@ package proj.mapreduce.client;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import proj.mapreduce.job.Job;
 import proj.mapreduce.server.ClientObserver;
 
@@ -14,7 +17,8 @@ import proj.mapreduce.server.ClientObserver;
  *
  */
 public class ClientConfiguration {
-
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(ClientConfiguration.class);
 	boolean active = false;
 	InetAddress address;
 	public final static int serverport = 9182;
@@ -48,7 +52,7 @@ public class ClientConfiguration {
 		try {
 			this.address = InetAddress.getByName(ipaddr);
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 
 	}

@@ -2,6 +2,9 @@ package proj.mapreduce.client;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Command listener class.
  * @author all team
@@ -9,6 +12,7 @@ import java.io.IOException;
  */
 public class CommandListener{
 
+	private static Logger LOGGER = LoggerFactory.getLogger(CommandListener.class);
 	/**
 	 * choosing command parser.
 	 * @param command
@@ -38,7 +42,7 @@ public class CommandListener{
 	{
 		String commandArgs[] = yarncommand.split(":");
 		String command = commandArgs[1];
-		
+		LOGGER.debug("command:" + command);
 		switch (command)
 		{
 		case "detect":

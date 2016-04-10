@@ -9,6 +9,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * observer class that communicates with master.
  * 
@@ -16,7 +19,7 @@ import java.net.UnknownHostException;
  *
  */
 public class MasterObserver implements Runnable {
-
+	private static Logger LOGGER = LoggerFactory.getLogger(MasterObserver.class);
 	Thread observer;
 	boolean active = false;
 	int port = 6789;
@@ -88,8 +91,8 @@ public class MasterObserver implements Runnable {
 				command = instream.readLine();
 				CommandListener.takeAction(command);
 			}
-
-		} catch (IOException e1) {
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
 		}
 
 	}

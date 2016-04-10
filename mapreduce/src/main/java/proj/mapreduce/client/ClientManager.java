@@ -3,6 +3,9 @@ package proj.mapreduce.client;
 import java.io.IOException;
 import java.net.SocketException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import proj.mapreduce.job.JobRunner;
 import proj.mapreduce.utils.awshelper.S3Helper;
 import proj.mapreduce.utils.network.NetworkUtils;
@@ -16,7 +19,7 @@ import proj.mapreduce.utils.network.ftp.FtpClient;
  *
  */
 public class ClientManager {
-
+	private static Logger LOGGER = LoggerFactory.getLogger(ClientManager.class);
 	static boolean busy = false;
 	static MasterObserver observer = null;
 	static PingTask pingtask = null;
@@ -69,7 +72,7 @@ public class ClientManager {
 			observer.start();
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 	}
 
@@ -158,7 +161,7 @@ public class ClientManager {
 		try {
 			runner.runJob(jobname);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 
 	}
