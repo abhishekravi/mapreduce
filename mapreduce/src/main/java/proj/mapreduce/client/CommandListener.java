@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import proj.mapreduce.utils.network.Command;
+
 /**
  * Command listener class.
  * @author all team
@@ -86,6 +88,12 @@ public class CommandListener{
 			String outputOfJob = commandArgs[8];
 			
 			ClientManager.runJob(jobname, mode, bucketName, listOfFiles, inputToJob, outputOfJob);
+			break;
+		case "doreducer":
+			ClientManager.doShuffle (yarncommand.replace(Command.YARN_DO_REDUCER.toString(), 
+					""));
+			ClientManager.doMerge();
+			break;
 		}
 	}
 

@@ -1,11 +1,13 @@
 package proj.mapreduce.client;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import proj.mapreduce.experiment.merge.Merge;
 import proj.mapreduce.job.JobRunner;
 import proj.mapreduce.utils.awshelper.S3Helper;
 import proj.mapreduce.utils.network.NetworkUtils;
@@ -24,11 +26,11 @@ public class ClientManager {
 	static MasterObserver observer = null;
 	static PingTask pingtask = null;
 	static FTPServer ftpserver = null;
-	static FtpClient ftpclient = null;
 	static String awsid;
 	static String awskey;
 	static ClientConfiguration clientconf;
-
+	static String shufflefolder = "shuffle";
+	
 	/**
 	 * ClientManager constructor.
 	 * @param awsid
@@ -111,8 +113,7 @@ public class ClientManager {
 	 */
 	public static void getfromClient(String server, int port, String user, String password, String serverfile,
 			String localfile) throws SocketException, IOException {
-
-		ftpclient = new FtpClient(server, port, user, password);
+		FtpClient ftpclient = new FtpClient(server, port, user, password);
 		ftpclient.downloadFileBlocking(serverfile, localfile);
 		ftpclient.stop();
 	}
@@ -172,5 +173,46 @@ public class ClientManager {
 	 */
 	public boolean busy() {
 		return busy;
+	}
+	
+	/**
+	 * 
+	 */
+	public static void doShuffle(String ftpfiles)
+	{
+		String [] ftplist = ftpfiles.split(":");
+		String [] filelist;
+		String ftpipaddress, ftpusername, ftppass;
+		int ftpport; 
+		File file = new File (shufflefolder);
+		if (file.mkdirs()) 
+		{
+			for (String str : ftplist)
+			{
+				filelist = str.split(",");
+				
+				ftpipaddress = filelist[0];
+				ftpport = Integer.parseInt(filelist[1]);
+				ftpusername = filelist[2];
+				ftppass = filelist[3];
+				
+				for (int i = 4; i < filelist.length; i++)
+				{
+					try {
+						getfromClient (ftpipaddress, ftpport, ftpusername,
+								ftppass, filelist[i], shufflefolder + filelist[i]);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	
+	public static void doMerge ()
+	{
+		String args = "merge " + shufflefolder + " output";
+		Merge.main(args.split(" "));
 	}
 }
