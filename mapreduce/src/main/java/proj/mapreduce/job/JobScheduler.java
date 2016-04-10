@@ -9,23 +9,39 @@ import proj.mapreduce.client.ClientConfiguration;
 import proj.mapreduce.server.ServerConfiguration;
 import proj.mapreduce.utils.KeyPair;
 
-
+/**
+ * Creates a pool of jobs and scheduling them
+ * @author all members
+ *
+ */
 public class JobScheduler {
 
 	static Queue<Job> m_jobs;
 	static ServerConfiguration m_serverconf;
 
+	/**
+	 * constructor 
+	 * @param serverconf: server configuration  
+	 */
 	public JobScheduler(ServerConfiguration serverconf) {
 		m_jobs = new PriorityQueue<Job>();
 		m_serverconf = serverconf;
 	}
 
-	
+	/**
+	 * add job to the job pool
+	 * @param job
+	 */
 	public void addJob (Job job)
 	{
 		m_jobs.add(job);
 	}
 
+	/**
+	 * gets the first job in the pool and also the first inactive client 
+	 * and assign the job to the client
+	 * @return a pair of job and client.
+	 */
 	public KeyPair <Job, ClientConfiguration> scheduleNextJob ()
 	{
 		KeyPair<Job, ClientConfiguration> pair = null;
@@ -47,6 +63,13 @@ public class JobScheduler {
 		return pair;
 	}
 	
+	/**
+	 * build the job pool based on jobnames. 
+	 * @param jobname: name of job
+	 * @param input: job args
+	 * @param output: job args
+	 * @param nclient: number of clients 
+	 */
 	public void buid (String jobname, String input, String output, int nclient)
 	{
 		for (int i = 0; i < nclient; i++)
