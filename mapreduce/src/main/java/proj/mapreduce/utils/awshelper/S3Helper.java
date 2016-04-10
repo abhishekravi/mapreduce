@@ -20,8 +20,6 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 
-import proj.mapreduce.utils.FileOp;
-
 /**
  * Util class to download files from s3.
  * 
