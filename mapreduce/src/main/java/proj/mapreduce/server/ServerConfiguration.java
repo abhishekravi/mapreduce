@@ -45,6 +45,76 @@ public class ServerConfiguration {
 		ipaddress = NetworkUtils.getBroadcastIpAddress();
 	}
 
+	/**
+	 * update client to list of connected clients.
+	 * 
+	 * @param address
+	 * @return
+	 */
+	public boolean updateClient(String address) {
+		try {
+			if (!configMap.containsKey(InetAddress.getByName(address))) {
+				ClientConfiguration clientconfig = new ClientConfiguration();
+				clientconfig.setIpaddressbyName(address);
+				clientconfig.setActive(false);
+				configMap.put(InetAddress.getByName(address), clientconfig);
+				return true;
+			}
+
+		} catch (UnknownHostException e) {
+			LOGGER.error(e.getMessage());
+		}
+
+		return false;
+	}
+
+	/**
+	 * add client observer
+	 * 
+	 * @param address
+	 * @param observer
+	 * @return
+	 */
+	public boolean addObserver(String address, ClientObserver observer) {
+		try {
+			if (configMap.containsKey(InetAddress.getByName(address))) {
+				configMap.get(InetAddress.getByName(address)).setObserver(observer);
+				return true;
+			}
+		} catch (UnknownHostException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return false;
+	}
+
+	/**
+	 * return client observer
+	 * 
+	 * @param ipaddress
+	 * @return
+	 */
+	public ClientObserver observedClient(InetAddress ipaddress) {
+		return configMap.get(ipaddress).getObserver();
+	}
+
+	/**
+	 * return number of neighbors.
+	 * 
+	 * @return
+	 */
+	public int activeNeighbors() {
+		return configMap.size();
+	}
+
+	/**
+	 * get client configuration form its ipadress
+	 * 
+	 * @return
+	 */
+	public Map<InetAddress, ClientConfiguration> getClientConfiguration() {
+		return configMap;
+	}
+
 	/* get client count */
 	public int clientCount() {
 		return nclient;
@@ -66,79 +136,7 @@ public class ServerConfiguration {
 	}
 
 	/**
-	 * add client to client list
-	 */
-	public boolean updateClient(String address) {
-		try {
-			if (!configMap.containsKey(InetAddress.getByName(address))) {
-				ClientConfiguration clientconfig = new ClientConfiguration();
-				clientconfig.setIpaddressbyName(address);
-				clientconfig.setActive(false);
-				configMap.put(InetAddress.getByName(address), clientconfig);
-				return true;
-			}
-
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
-
-	/**
-	 * return numver of neighvors
-	 * 
-	 * @return
-	 */
-	public int activeNeighbors() {
-		return configMap.size();
-	}
-
-	/**
-	 * get client configuration form its ipadress
-	 * 
-	 * @return
-	 */
-	public Map<InetAddress, ClientConfiguration> getClientConfiguration() {
-		return configMap;
-	}
-
-	/**
-	 * staet client observer
-	 * 
-	 * @param address
-	 * @param observer
-	 * @return
-	 */
-	public boolean addObserver(String address, ClientObserver observer) {
-		try {
-			if (configMap.containsKey(InetAddress.getByName(address))) {
-				configMap.get(InetAddress.getByName(address)).setObserver(observer);
-				return true;
-			}
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
-
-	/**
-	 * returoeve cluebt observer
-	 * 
-	 * @param ipaddress
-	 * @return
-	 */
-	public ClientObserver observedClient(InetAddress ipaddress) {
-
-		if (configMap.containsKey(ipaddress))
-			;
-		{
-			return configMap.get(ipaddress).getObserver();
-		}
-	}
-
-	/**
-	 * update recieve cont
+	 * update receive count.
 	 * 
 	 * @param count
 	 */

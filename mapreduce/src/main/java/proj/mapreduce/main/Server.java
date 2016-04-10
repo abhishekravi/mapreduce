@@ -37,27 +37,19 @@ public class Server {
 		input = Client.class.getClassLoader().getResourceAsStream(filename);
 		try {
 			prop.load(input);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		LOGGER.info("args:" + args.toString());
+		LOGGER.info("args:" + args[0] + " " + args[1] + " " + args[2] + " " + args[3] + " " + args[4]);
 		int nclient = Integer.parseInt(args[0]);
 		String jobfile = args[1]; /* job.jar,input,output */
 		String mode = args[2]; /* aws, locl or hdfs */
 		String bucket = args[3]; /* bucketname */
 		String folder = args[4];
-
-		try {
 			m_server = new ServerManager(nclient, jobfile, mode, bucket, folder, prop.getProperty("awsid"),
 					prop.getProperty("awskey"));
 			m_server.start();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
-
-		while (m_server.busy())
-			;
+		while (m_server.busy());
 
 	}
 

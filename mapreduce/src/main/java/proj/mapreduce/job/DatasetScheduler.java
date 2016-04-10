@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import proj.mapreduce.server.ServerConfiguration;
 
 /**
@@ -14,6 +17,7 @@ import proj.mapreduce.server.ServerConfiguration;
  */
 public class DatasetScheduler {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(DatasetScheduler.class);
 	static ArrayList<Dataset> datasetList;
 	static ArrayList<List<String>> chunksList;
 	static ServerConfiguration serverconf;
@@ -118,7 +122,7 @@ public class DatasetScheduler {
 				chunk.add(onechunk.get(0));
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return chunk;
 

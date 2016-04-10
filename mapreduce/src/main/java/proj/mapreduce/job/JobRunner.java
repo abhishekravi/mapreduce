@@ -116,7 +116,7 @@ public class JobRunner {
 			proc.waitFor();
 			MasterObserver.updateServer(makeReply2Server(args.split(",")[1]));
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 	}
 

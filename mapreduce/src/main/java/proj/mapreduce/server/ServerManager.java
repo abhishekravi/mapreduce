@@ -23,7 +23,7 @@ import proj.mapreduce.utils.network.Command;
 import proj.mapreduce.utils.network.NetworkDiscovery;
 
 /**
- * 
+ * ServerManager class.
  * @author all team
  *
  */
@@ -31,10 +31,8 @@ public class ServerManager {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(ServerManager.class);
 	boolean active = false;
-
 	static TimerTask pingTimerTask;
 	static Timer pingTimer;
-
 	static private ServerConfiguration serverconf;
 	static private ThreadGroup clientobsthgrp;
 	static private JobScheduler jscheduler;
@@ -55,13 +53,10 @@ public class ServerManager {
 			String awskey) throws IOException {
 		serverconf = new ServerConfiguration(nclient);
 		String[] jobargs = job.split(",");
-
 		buildScheduler();
 		buildJobPool(jobargs[0], jobargs[1], jobargs[2]);
 		buidDatasetScheduler(mode, bucketname, folder, awsid, awskey);
-
 		clientobsthgrp = new ThreadGroup("Client Observers");
-
 	}
 
 	/**
@@ -92,7 +87,6 @@ public class ServerManager {
 	public static void buidDatasetScheduler(String mode, String bucketname, String folder, String awsid,
 			String awskey) {
 		dsheduler = new DatasetScheduler(serverconf);
-
 		Dataset dataset = new Dataset(mode, bucketname, folder, awsid, awskey);
 		dsheduler.addDataset(dataset);
 	}
@@ -148,11 +142,8 @@ public class ServerManager {
 	 * @param address
 	 */
 	public static void startObserver(String address, int port) {
-
 		LOGGER.info("address:" + address);
-
 		ClientObserver clientobs = new ClientObserver(clientobsthgrp, address, port);
-
 		if (serverconf.addObserver(address, clientobs)) {
 			clientobs.start();
 		}
@@ -176,14 +167,11 @@ public class ServerManager {
 		if (!serverconf.updateClient(address)) {
 			return false;
 		}
-
 		ServerManager.startObserver(address, obsrvport);
-
 		if (serverconf.activeNeighbors() >= serverconf.clientCount()) {
 			ServerManager.startScheduling();
 			NetworkDiscovery.stop();
 		}
-
 		return true;
 	}
 
@@ -191,29 +179,22 @@ public class ServerManager {
 	 * 
 	 */
 	public static void startScheduling() {
-
 		dsheduler.schedule(0);
-
 		for (int i = 0; i < serverconf.clientCount(); i++) {
-
 			KeyPair<Job, ClientConfiguration> pair = jscheduler.scheduleNextJob();
-
 			if (serverconf.observedClient(pair.getRight().getAddress()).toString() != "") {
 				/* create job command */
 				Job job = pair.getLeft();
 				job.addDataset(dsheduler.getType(), dsheduler.getBucketname(), dsheduler.getNextChunk());
-
 				String command = Command.YARN_RUN_JOB.toString();
 				command = command + job.toString() + "\n";
-
 				try {
 					serverconf.observedClient(pair.getRight().getAddress()).sendCommand(command);
 				} catch (IOException e) {
-					e.printStackTrace();
+					LOGGER.error(e.getMessage());
 				}
 			}
 		}
-
 		dsheduler.removeDataset(0);
 	}
 
@@ -233,9 +214,8 @@ public class ServerManager {
 				;
 			}
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
-
 		/* create dataset from type hdfs */
 		Dataset dataset = new Dataset(ip, port, user, pass, intermediatefiles);
 		dsheduler.addDataset(dataset);
@@ -247,18 +227,14 @@ public class ServerManager {
 	public static void shuffle() {
 		Collection<ClientConfiguration> clientaddr = serverconf.getClientConfiguration().values();
 		ArrayList<List<String>> chunks;
-
 		/* get all clients */
 		for (ClientConfiguration conf : clientaddr) {
 			if (conf.isActive())
 				return;
 		}
-
 		/* schedule dataset */
 		chunks = dsheduler.reducerSchedule();
-
 		createReducerCommand(chunks);
-
 	}
 
 	/**
@@ -269,29 +245,23 @@ public class ServerManager {
 		/* loop over chunks */
 		String chunkstring = "";
 		String command = "";
-
 		for (List<String> liststr : allchunks) {
 			chunkstring += liststr.remove(liststr.size() - 1);
 			for (String str : liststr) {
 				chunkstring += str;
 				chunkstring += ",";
 			}
-
 			/* remove * from last */
 			chunkstring.substring(0, chunkstring.length() - 1);
 			chunkstring += ":";
 		}
-
 		chunkstring.substring(0, chunkstring.length() - 1);
-
 		command = Command.YARN_DO_REDUCER.toString() + ":" + chunkstring;
-
 		InetAddress ips = serverconf.getClientConfiguration().keySet().iterator().next();
-
 		try {
 			serverconf.observedClient(ips).sendCommand(command);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 	}
 }

@@ -4,6 +4,11 @@ import java.io.IOException;
 
 import com.opencsv.CSVParser;
 
+/**
+ * Util class.
+ * @author Abhishek Ravi Chandran
+ *
+ */
 public class Utils {
 
 	final static CSVParser PARSER = new CSVParser();

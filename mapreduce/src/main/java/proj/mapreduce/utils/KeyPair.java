@@ -1,5 +1,12 @@
 package proj.mapreduce.utils;
 
+/**
+ * Custom key pair.
+ * @author raiden
+ *
+ * @param <L>
+ * @param <R>
+ */
 public class KeyPair<L,R> {
 
 	private final L left;
