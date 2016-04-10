@@ -10,6 +10,11 @@ import java.util.Map.Entry;
 import proj.mapreduce.utils.FileOp;
 import proj.mapreduce.utils.awshelper.S3ListKeys;
 
+/**
+ * Create a container for dataset properties
+ * @author allmembers
+ *
+ */
 public class Dataset {
 	
 	String m_type;
@@ -23,6 +28,15 @@ public class Dataset {
 	int    m_port;
 	String m_intermediatefiles;
 	
+	/**
+	 * creae dataset
+	 * @param type
+	 * @param bucketname
+	 * @param accesskey
+	 * @param secretkey
+	 * @param user
+	 * @param password
+	 */
 	Dataset (String type, String bucketname, String accesskey, String secretkey, String user, String password)
 	{
 		m_type  =type;
@@ -33,6 +47,14 @@ public class Dataset {
 		m_bucketname = bucketname;
 	}
 	
+	/**
+	 * dataset constructor
+	 * @param type
+	 * @param bucketname
+	 * @param folder
+	 * @param awsid
+	 * @param awskey
+	 */
 	public Dataset(String type, String bucketname, String folder, String awsid, String awskey)
 	{
 		m_type = type;
@@ -42,6 +64,14 @@ public class Dataset {
 		m_folder = folder;
 	}
 	
+	/**
+	 * dataset constructor
+	 * @param ip
+	 * @param port
+	 * @param user
+	 * @param pass
+	 * @param intermediatefiles
+	 */
 	public Dataset(String ip, int port, String user, String pass, String intermediatefiles) {
 		m_type = "ftp";
 		m_ip = ip;
@@ -52,7 +82,12 @@ public class Dataset {
 		
 	}
 
-	
+	/**
+	 * schedule data with in a dataset
+	 * @param cclient
+	 * @return
+	 * @throws IOException
+	 */
 	public ArrayList<List<String>> distribute(int cclient) throws IOException
 	{
 		int index = 0;
@@ -94,16 +129,28 @@ public class Dataset {
 		return chunks;
 	}
 
+	/**
+	 * get dataset type
+	 * @return
+	 */
 	public String type ()
 	{
 		return m_type;
 	}
 	
+	/**
+	 * get bucket name
+	 * @return
+	 */
 	public String bucketname()
 	{
 		return m_bucketname;
 	}
 	
+	/**
+	 * get ftp configuration
+	 * @return
+	 */
 	public String getFtpConfig ()
 	{
 		return (m_ip + "," + m_port + "," + m_user + "," + m_password + "," + m_intermediatefiles); 

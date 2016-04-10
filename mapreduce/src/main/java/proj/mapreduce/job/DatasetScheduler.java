@@ -8,20 +8,31 @@ import java.util.List;
 
 import proj.mapreduce.server.ServerConfiguration;
 
+/**
+ * This class create a pool for datasets
+ * @author all members
+ *
+ */
 public class DatasetScheduler {
 
 	static ArrayList<Dataset> m_dataset;
 	static ArrayList<List<String>> m_chunks; 
 	static ServerConfiguration m_serverconf;
 
-
+	/**
+	 * constructor 
+	 * @param serverconf
+	 */
 	public DatasetScheduler (ServerConfiguration serverconf)
 	{
 		m_dataset = new ArrayList<Dataset>();
 		m_serverconf = serverconf;
 	}
 
-
+	/**
+	 * schedule data files in a specified dataset
+	 * @param index
+	 */
 	public void schedule (int index)
 	{
 		try {
@@ -31,16 +42,29 @@ public class DatasetScheduler {
 		}
 	}
 
+	/**
+	 * add dataset to pool
+	 * @param ds
+	 */
 	public void addDataset (Dataset ds)
 	{
 		m_dataset.add(ds);
 	}
 
+	/**
+	 * get the scheduled data chunks
+	 * @param index
+	 * @return
+	 */
 	public List<String> getChunck (int index)
 	{
 		return m_chunks.get(index);
 	}
 
+	/**
+	 * get the first scheduled data chunk
+	 * @return
+	 */
 	public List<String> getNextChunk ()
 	{
 		List<String> keys = new ArrayList<String>();
@@ -53,21 +77,37 @@ public class DatasetScheduler {
 		return keys;
 	}
 
+	/**
+	 * get dataset type
+	 * @return
+	 */
 	public String getType()
 	{
 		return m_dataset.get(0).type();
 	}
 
+	/**
+	 * get bucket name
+	 * @return
+	 */
 	public String getBucketname()
 	{
 		return m_dataset.get(0).bucketname();
 	}
 	
+	/**
+	 * remmove dataset from list
+	 * @param index
+	 */
 	public void removeDataset(int index)
 	{
 		m_dataset.remove(index);
 	}
 
+	/**
+	 * schedule for reducer
+	 * @return
+	 */
 	public ArrayList<List<String>> reducerSchedule()
 	{
 		ArrayList<List<String>> chunk = new ArrayList<List<String>>();

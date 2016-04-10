@@ -17,6 +17,11 @@ import proj.mapreduce.utils.Utils;
 import proj.mapreduce.utils.awshelper.S3Helper;
 import proj.mapreduce.utils.network.Command;
 
+/**
+ * Gets the job and run it
+ * @author all member
+ *
+ */
 public class JobRunner {
 
 	String m_inputdir; 
@@ -25,45 +30,45 @@ public class JobRunner {
 	
 	ClientConfiguration m_clientconf;
 	
-	
+	/**
+	 * make job arguments
+	 * @param jobName
+	 * @param inputToJob
+	 * @param outputOfJob
+	 */
 	public void setArgs(String jobName, String inputToJob, String outputOfJob)
 	{
 		m_args = jobName + "," + inputToJob + "," + outputOfJob;
 	}
 
 	/**
-	 * method to download files to be processed by the job.
-	 * @param mode
-	 * running mode
-	 * @param inputToJob
-	 * input dir to job
+	 * prepare input directory for the job.
+	 * @param mode: AWS, HDFS, LOCAL
+	 * @param inputToJob: 
 	 * @param bucketname
-	 * bucket
 	 * @param listOfFiles
-	 * files to get
 	 * @param awsid
-	 * awsid
 	 * @param awskey
-	 * awskey
 	 */
 	public void prepareInput(String mode, String inputToJob, String bucketname, String listOfFiles, String awsid, String awskey) {
-//		String key;
-//		String inputfolder;
 		String[] fileList = Utils.parseCSV(listOfFiles);
 
 		switch (mode) {
 		case "local":
-//			String path2inputs = inputArgs[1];
-//			inputfolder = m_args.split(",")[0];
-//
-//			if (FileOp.createFolder(inputfolder)) {
-//				m_inputdir = inputfolder;
-//			}
-//
-//			for (int i = 2; i < inputArgs.length; i++) {
-//				key = inputArgs[i];
-//				FileOp.readFromLocal(path2inputs, inputfolder, key);
-//			}
+			String key;
+			String inputfolder;
+			String path2inputs = listOfFiles;
+			inputfolder = m_args.split(",")[0];
+			String [] inputArgs = listOfFiles.split(",");
+			
+			if (FileOp.createFolder(inputfolder)) {
+				m_inputdir = inputfolder;
+			}
+
+			for (int i = 2; i < inputArgs.length; i++) {
+				key = inputArgs[i];
+				FileOp.readFromLocal(path2inputs, inputfolder, key);
+			}
 
 			break;
 		case "aws":
@@ -85,6 +90,11 @@ public class JobRunner {
 		}
 	}
 
+	/**
+	 * create a process form job and wait for it to be ready
+	 * @param jobname
+	 * @throws InterruptedException
+	 */
 	public void runJob (String jobname) throws InterruptedException
 	{
 		try {
@@ -113,6 +123,11 @@ public class JobRunner {
 		}
 	}
 
+	/**
+	 * 
+	 * @param out
+	 * @return
+	 */
 	private String makeReply2Server (String out)
 	{
 		File outdir = new File (out);
