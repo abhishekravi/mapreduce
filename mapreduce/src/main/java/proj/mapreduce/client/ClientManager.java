@@ -26,6 +26,7 @@ public class ClientManager {
 		
 		m_clientconf = new ClientConfiguration();
 		m_clientconf.setIpaddressbyName(NetworkUtils.getIpAddress().getHostName());
+		m_clientconf.setupFtpConfiguration("geust", "", "/home/ftp");
 	}
 	
 	public ClientManager(String awsid, String awskey, String ftpuser, String ftppass, String ftppath)

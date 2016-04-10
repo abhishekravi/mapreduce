@@ -16,7 +16,8 @@ public class Client {
 		String filename = "config.properties";
 		input = Client.class.getClassLoader().getResourceAsStream(filename);
 		prop.load(input);
-		ClientManager m_client = new ClientManager(prop.getProperty("awsid"), prop.getProperty("awskey"));
+		ClientManager m_client = new ClientManager(prop.getProperty("awsid"), 
+				prop.getProperty("awskey"), "guest", "", "/home/ftp");
 		m_client.startPinging();
 		m_client.startFtpServer();
 		while (m_client.busy());
