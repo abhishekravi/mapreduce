@@ -3,14 +3,14 @@ package proj.mapreduce.client;
 import java.io.IOException;
 
 /**
- * 
+ * Command listener class.
  * @author all team
  *
  */
 public class CommandListener{
 
 	/**
-	 * 
+	 * choosing command parser.
 	 * @param command
 	 * @throws IOException
 	 */
@@ -20,7 +20,7 @@ public class CommandListener{
 		switch (command.split(":")[0])
 		{
 		case "yarn":
-			ParseYarnCommand(command.substring(command.indexOf(":")));
+			parseYarnCommand(command.substring(command.indexOf(":")));
 			break;
 			
 		default:
@@ -30,11 +30,11 @@ public class CommandListener{
 	}
 	
 	/**
-	 * 
+	 * command parser.
 	 * @param yarncommand
 	 * @throws IOException
 	 */
-	private static void ParseYarnCommand (String yarncommand) throws IOException
+	private static void parseYarnCommand (String yarncommand) throws IOException
 	{
 		String commandArgs[] = yarncommand.split(":");
 		String command = commandArgs[1];
