@@ -6,6 +6,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+/**
+ * TCP Connection to communicate with client
+ * @author root
+ *
+ */
 public class ClientObserver implements Runnable {
 
 	private Socket m_clientsocket;
@@ -14,6 +19,12 @@ public class ClientObserver implements Runnable {
 	BufferedReader m_instream;
 	boolean m_active =false;
 	
+	/**
+	 * constructor based on parameters
+	 * @param threadgrp
+	 * @param clientaddr
+	 * @param obsrvport
+	 */
 	public ClientObserver(ThreadGroup threadgrp, String clientaddr, int obsrvport) {
 		
 		m_obsrvth = new Thread(this, "Client Observer");
@@ -28,12 +39,18 @@ public class ClientObserver implements Runnable {
 		}
 	}
 
+	/**
+	 * start TCP listener thread
+	 */
 	public void start()
 	{
 		if (m_active) return; 		
 		m_obsrvth.start();
 	}
 
+	/*
+	 * stop oberver
+	 */
 	public void stop() throws IOException
 	{
 		m_active = false;
@@ -44,6 +61,9 @@ public class ClientObserver implements Runnable {
 		
 	}
 	
+	/**
+	 * therunner class for observer
+	 */
 	@Override
 	public void run() {
 		m_active = true;

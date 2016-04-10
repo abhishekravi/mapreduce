@@ -9,6 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import proj.mapreduce.server.ServerManager;
 
+/**
+ * Server program main class
+ * @author root
+ *
+ */
 public class Server {
 	private static Logger LOGGER = LoggerFactory.getLogger(Server.class);
 	/**

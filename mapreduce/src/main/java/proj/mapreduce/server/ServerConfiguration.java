@@ -16,6 +16,11 @@ import org.slf4j.LoggerFactory;
 import proj.mapreduce.client.ClientConfiguration;
 import proj.mapreduce.utils.network.NetworkUtils;
 
+/**
+ * a container for server configuraion
+ * @author root
+ *
+ */
 public class ServerConfiguration {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(ServerConfiguration.class);
@@ -34,6 +39,10 @@ public class ServerConfiguration {
 	private static Map <InetAddress, ClientConfiguration> m_clientconf;	
 	int m_reducercount = 1;
 	
+	/**
+	 * constructor
+	 * @param nclients
+	 */
 	public ServerConfiguration(int nclients) {
 		m_nclient = nclients;
 		m_neighbors = new HashMap<InetAddress, Boolean>();
@@ -42,26 +51,33 @@ public class ServerConfiguration {
 		ip_address = NetworkUtils.getBroadcastIpAddress();
 	}
 	
+	/* get client count*/
 	public int clientCount ()
 	{
 		return m_nclient;
 	}
 	
+	/* get discovery time */
 	public int discoveyTimeout ()
 	{
 		return m_discovery_timeout;
 	}
 	
+	/* get ping timeout*/
 	public int pingTimeout ()
 	{
 		return m_ping_timeout;
 	}
 	
+	/*set ping frequency*/
 	public int pingFrequency ()
 	{
 		return m_ping_frequency;
 	}
 	
+	/**
+	 * add client to client list
+	 * */
 	public boolean updateClient (String address)
 	{
 		try {
@@ -83,16 +99,30 @@ public class ServerConfiguration {
 		return false;
 	}
 	
+	/**
+	 * return numver of neighvors
+	 * @return
+	 */
 	public int	activeNeighbors()
 	{
 		return m_clientconf.size();
 	}
 	
+	/**
+	 * get client configuration form its ipadress
+	 * @return
+	 */
 	public Map <InetAddress, ClientConfiguration> getClientConfiguration()
 	{
 		return m_clientconf;
 	}
 	
+	/**
+	 * staet client observer
+	 * @param address
+	 * @param observer
+	 * @return
+	 */
 	public boolean addObserver(String address, ClientObserver observer)
 	{
 		try {
@@ -107,6 +137,11 @@ public class ServerConfiguration {
 		return false;
 	}
 
+	/**
+	 * returoeve cluebt observer
+	 * @param ipaddress
+	 * @return
+	 */
 	public ClientObserver observedClient(InetAddress ipaddress) {
 		
 		if (m_clientconf.containsKey(ipaddress));
@@ -115,6 +150,10 @@ public class ServerConfiguration {
 		}
 	}
 	
+	/**
+	 * update recieve cont
+	 * @param count
+	 */
 	public void setReducerCount (int count)
 	{
 		m_reducercount = count;

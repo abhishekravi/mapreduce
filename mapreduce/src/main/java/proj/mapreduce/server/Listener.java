@@ -7,9 +7,17 @@ import proj.mapreduce.client.ClientManager;
 import proj.mapreduce.client.PingTask;
 import proj.mapreduce.utils.network.NetworkDiscovery;
 
+/**
+ * Listener class to take action againts commands in server
+ * @author root
+ *
+ */
 public class Listener {
 
-	/* Parse Input Command and take actoin */
+	/**
+	 * Parse Input Command and take actoin
+	 * @param command
+	 */
 	public static void takeAction(String command)
 	{
 		/* Check if command is from yarn */
@@ -29,6 +37,11 @@ public class Listener {
 
 	}
 
+	/**
+	 * parse command
+	 * @param yarncommand
+	 * @throws IOException
+	 */
 	private static void ParseYarnCommand (String yarncommand) throws IOException
 	{
 		String command = yarncommand.split(":")[1];
