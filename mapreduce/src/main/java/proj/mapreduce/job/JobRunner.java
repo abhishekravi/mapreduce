@@ -23,7 +23,7 @@ public class JobRunner {
 	String m_args;
 	private static Logger LOGGER = LoggerFactory.getLogger(JobRunner.class);
 	
-	ClientConfiguration m_clientconf;
+	ClientConfiguration clientConf;
 	
 	
 	public void setArgs(String jobName, String inputToJob, String outputOfJob)
@@ -105,17 +105,17 @@ public class JobRunner {
 		
 		String command = Command.YARN_COMPLETE_JOB.toString();
 
-		command = command + m_clientconf.getIpaddress() + ":";
-		command = command + m_clientconf.ftpPort() + ":";
-		command = command + m_clientconf.ftpUser() + ":";
-		command = command + m_clientconf.ftpPass() + ":";
+		command = command + clientConf.getAddress() + ":";
+		command = command + ClientConfiguration.ftpport + ":";
+		command = command + clientConf.getFtpuser() + ":";
+		command = command + clientConf.getFtppass() + ":";
 		
 		
 		for (int i = 0; i < files.length; i++)
 		{
 			if (files[i].isFile())
 			{
-				command = command + files[i].getName().replace(m_clientconf.ftpPath() + "/", "") + ",";
+				command = command + files[i].getName().replace(clientConf.getFtppath() + "/", "") + ",";
 			}
 		}
 		

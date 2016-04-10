@@ -45,7 +45,7 @@ public class MasterObserver implements Runnable {
 	{
 		if (m_active) return;
 
-		m_serversocket = new ServerSocket(ClientConfiguration.observerPort()); 
+		m_serversocket = new ServerSocket(ClientConfiguration.serverport); 
 		createObserveTh();		
 	}
 

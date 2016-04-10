@@ -42,14 +42,14 @@ public class FTPServer {
 		ListenerFactory factory;
 
 		factory = new ListenerFactory();
-		factory.setPort(m_clientconf.ftpPort());
+		factory.setPort(ClientConfiguration.ftpport);
 
 		serverFactory = new FtpServerFactory();
 		serverFactory.addListener("default", factory.createListener());
 
 		if (m_usermanager == null) {
 			createUserManager();
-			addUser(m_clientconf.ftpUser(), m_clientconf.ftpPass(), m_clientconf.ftpPath());
+			addUser(m_clientconf.getFtpuser(), m_clientconf.getFtppass(), m_clientconf.getFtppath());
 		}
 		serverFactory.setUserManager(m_usermanager);
 

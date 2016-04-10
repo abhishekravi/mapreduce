@@ -52,10 +52,10 @@ public class JobScheduler {
 		{
 			client = (ClientConfiguration) citr.next();
 
-			if (!client.busy())
+			if (!client.isActive())
 			{
 				pair = new KeyPair<Job, ClientConfiguration> (m_jobs.poll(), client);
-				client.updateStatus(true);
+				client.setActive(true);
 				return pair;
 			}
 		}

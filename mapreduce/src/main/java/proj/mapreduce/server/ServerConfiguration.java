@@ -85,7 +85,7 @@ public class ServerConfiguration {
 			{
 				ClientConfiguration clientconf = new ClientConfiguration();
 				clientconf.setIpaddressbyName(address);
-				clientconf.updateStatus(false);
+				clientconf.setActive(false);
 				
 				m_clientconf.put(InetAddress.getByName(address), clientconf);
 				
@@ -146,7 +146,7 @@ public class ServerConfiguration {
 		
 		if (m_clientconf.containsKey(ipaddress));
 		{
-			return m_clientconf.get(ipaddress).observer();
+			return m_clientconf.get(ipaddress).getObserver();
 		}
 	}
 	

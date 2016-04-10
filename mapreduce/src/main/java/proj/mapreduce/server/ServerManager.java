@@ -215,7 +215,7 @@ public class ServerManager {
 			
 			KeyPair<Job, ClientConfiguration> pair = m_jscheduler.scheduleNextJob();
 	
-			if (m_serverconf.observedClient(pair.getRight().getIpaddress()).toString() != "")
+			if (m_serverconf.observedClient(pair.getRight().getAddress()).toString() != "")
 			{
 				/* create job command */
 				Job job = pair.getLeft();
@@ -225,7 +225,7 @@ public class ServerManager {
 				command = command + job.toString() + "\n";
 				
 				try {
-					m_serverconf.observedClient(pair.getRight().getIpaddress()).sendCommand(command);
+					m_serverconf.observedClient(pair.getRight().getAddress()).sendCommand(command);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -249,7 +249,7 @@ public class ServerManager {
 		try {
 			if (m_serverconf.getClientConfiguration().keySet().contains(InetAddress.getByName(ip)))
 			{
-				m_serverconf.getClientConfiguration().get(InetAddress.getByName(ip)).updateStatus(false);;
+				m_serverconf.getClientConfiguration().get(InetAddress.getByName(ip)).setActive(false);;
 			}
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
@@ -271,7 +271,7 @@ public class ServerManager {
 		/* get all clients */
 		for (ClientConfiguration conf : clientaddr)
 		{
-			if (conf.busy())
+			if (conf.isActive())
 				return;
 		}
 		

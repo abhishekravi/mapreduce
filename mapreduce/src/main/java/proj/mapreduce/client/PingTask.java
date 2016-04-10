@@ -107,7 +107,7 @@ public class PingTask implements Runnable {
 	{
 		InetAddress address = InetAddress.getByName(ack.split(",")[0]);
 		int port = Integer.parseInt(ack.split(",")[1]);
-		String reply = ack.split(",")[2] + ":" +  ClientConfiguration.observerPort();
+		String reply = ack.split(",")[2] + ":" +  ClientConfiguration.serverport;
 		
 		DatagramPacket send_packet = new DatagramPacket(reply.getBytes(), reply.getBytes().length, 
 				address, port);		
