@@ -10,6 +10,8 @@ import java.util.List;
 
 import com.opencsv.CSVParser;
 
+import proj.sortclient.exception.BadDataException;
+
 /**
  * 
  * @author Chintan Pathak, Abhishek Ravi Chandran
@@ -31,13 +33,14 @@ public class Utils {
 	 * @param value
 	 *            csv data
 	 * @return string array
+	 * @throws BadDataException 
 	 */
-	public static String[] parseCSV(String value) {
+	public static String[] parseCSV(String value) throws BadDataException {
 		String parsed[] = null;
 		try {
 			parsed = PARSER.parseLine(value);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new BadDataException(e.getMessage());
 		}
 		return parsed;
 	}
