@@ -176,44 +176,54 @@ public class ClientManager {
 		return busy;
 	}
 	
-	/**
-	 * 
-	 */
-	public static void doShuffle(String ftpfiles)
-	{
-		String [] ftplist = ftpfiles.split(":");
-		String [] filelist;
-		String ftpipaddress, ftpusername, ftppass;
-		int ftpport; 
-		File file = new File (shufflefolder);
-		if (file.mkdirs()) 
-		{
-			for (String str : ftplist)
-			{
-				filelist = str.split(",");
-				
-				ftpipaddress = filelist[0];
-				ftpport = Integer.parseInt(filelist[1]);
-				ftpusername = filelist[2];
-				ftppass = filelist[3];
-				
-				for (int i = 4; i < filelist.length; i++)
-				{
-					try {
-						getfromClient (ftpipaddress, ftpport, ftpusername,
-								ftppass, filelist[i], shufflefolder + "/" + filelist[i]);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
+	   /**
+     * 
+     */
+    public static void doShuffle(String ftpfiles)
+    {
+        String [] ftplist = ftpfiles.split(":");
+        String [] filelist;
+        String ftpipaddress, ftpusername, ftppass;
+        int ftpport; 
+        File file = new File (shufflefolder);
+
+        if (!file.exists())
+        {
+            if (!file.mkdirs())
+                return;
+        }
+
+
+
+        for (String str : ftplist)
+        {
+            filelist = str.split(",");
+
+            ftpipaddress = filelist[0];
+            ftpport = Integer.parseInt(filelist[1]);
+            ftpusername = filelist[2];
+            ftppass = filelist[3];
+            String shufflename;
+
+            for (int i = 4; i < filelist.length; i++)
+            {
+                try {
+                    shufflename = clientconf.getAddress().getHostAddress() + "_" 
+                            + filelist[i].split("/")[filelist[i].split("/").length - 1];
+                    getfromClient (ftpipaddress, ftpport, ftpusername,
+                            ftppass, filelist[i], shufflefolder + "/" + shufflename);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
 	
 	public static void doMerge ()
 	{
-		String args = "merge " + shufflefolder + " output";
+		String args = "merge " + shufflefolder + " finaloutput";
 		Merge.main(args.split(" "));
 	}
 }

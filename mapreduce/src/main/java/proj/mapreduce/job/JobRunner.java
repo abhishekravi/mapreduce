@@ -136,7 +136,8 @@ public class JobRunner {
 		command = command + clientConf.getFtppass() + ":";
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isFile()) {
-				command = command + files[i].getName().replace(clientConf.getFtppath() + "/", "") + ",";
+				//command = command + files[i].getParent() + "/" + files[i].getName() + ",";
+				command = command + files[i].getAbsolutePath().replace(clientConf.getFtppath() + "/", "") + ",";
 			}
 		}
 		command = command.substring(0, command.lastIndexOf(",")) + "\n";
