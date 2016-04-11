@@ -2,7 +2,7 @@ package proj.mapreduce.job;
 
 
 import java.util.Iterator;
-import java.util.PriorityQueue;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import proj.mapreduce.client.ClientConfiguration;
@@ -24,7 +24,7 @@ public class JobScheduler {
 	 * @param serverconf: server configuration  
 	 */
 	public JobScheduler(ServerConfiguration serverconf) {
-		JobScheduler.jobs = new PriorityQueue<Job>();
+		JobScheduler.jobs = new LinkedList<Job>();
 		JobScheduler.serverconf = serverconf;
 	}
 

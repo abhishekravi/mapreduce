@@ -95,6 +95,7 @@ public class ClientObserver implements Runnable {
 	 */
 	public void sendCommand(String command) throws IOException {
 		outstream.writeBytes(command);
+		outstream.flush();
 	}
 
 }

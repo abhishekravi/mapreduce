@@ -21,7 +21,7 @@ public class CommandListener{
 	 * @throws IOException
 	 */
 	public static void takeAction(String command) throws IOException {
-		
+		LOGGER.info("command:" + command);
 		/* Check if command is from yarn */
 		switch (command.split(":")[0])
 		{
@@ -44,7 +44,7 @@ public class CommandListener{
 	{
 		String commandArgs[] = yarncommand.split(":");
 		String command = commandArgs[1];
-		LOGGER.debug("command:" + command);
+		
 		switch (command)
 		{
 		case "detect":
