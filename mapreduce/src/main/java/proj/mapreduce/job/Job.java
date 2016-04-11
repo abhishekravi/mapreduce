@@ -137,7 +137,6 @@ public class Job implements Comparable<Job> {
 	 */
 	private String makeInput() {
 		Iterator<String> itr = dataset.iterator();
-		int i = 0;
 		String input = "null";
 		switch (mode) {
 		case "aws":
@@ -145,9 +144,6 @@ public class Job implements Comparable<Job> {
 			while (itr.hasNext()) {
 				input += itr.next();
 				input += ",";
-				i++;
-				if (i == 2)
-					break;
 			}
 			input = input.substring(0, input.lastIndexOf(","));
 			break;
