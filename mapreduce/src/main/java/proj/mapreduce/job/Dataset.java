@@ -3,9 +3,14 @@ package proj.mapreduce.job;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.jcraft.jsch.Logger;
+
+import java.util.Set;
 
 import proj.mapreduce.utils.FileOp;
 import proj.mapreduce.utils.awshelper.S3ListKeys;
@@ -93,7 +98,6 @@ public class Dataset {
 	 * @throws IOException
 	 */
 	public ArrayList<List<String>> distribute(int cclient) throws IOException {
-		int index = 0;
 		Map<String, Long> filelist = new HashMap<String, Long>();
 
 		switch (type) {
@@ -105,24 +109,15 @@ public class Dataset {
 			break;
 		}
 
-		List<Entry<String, Long>> entryList = new ArrayList<Map.Entry<String, Long>>(filelist.entrySet());
 		ArrayList<List<String>> chunks = new ArrayList<List<String>>(cclient);
 
 		for (int i = 0; i < cclient; i++) {
 			chunks.add(new ArrayList<String>());
 		}
 
-		while (!entryList.isEmpty()) {
-			chunks.get(index).add(entryList.get(0).getKey());
-			entryList.remove(0);
-
-			if (entryList.isEmpty())
-				break;
-
-			chunks.get(index).add(entryList.get(entryList.size() - 1).getKey());
-			entryList.remove(entryList.size() - 1);
-
-			index = (index + 1) % cclient;
+		Iterator<String> it = filelist.keySet().iterator();
+		for (int i = 0; i < filelist.size(); i++) {
+			chunks.get(i % cclient).add(it.next());
 		}
 
 		return chunks;
